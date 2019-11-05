@@ -40,16 +40,51 @@ final class ReflectionMethodsProvider implements MethodsProvider
 
     private function createMethod(ReflectionMethod $reflectionMethod): Method
     {
+        $requestBody = $this->annotationReader->getMethodAnnotation($reflectionMethod, RequestBody::class);
+
         return
             new Method(
                 $reflectionMethod->getName(),
                 $this->annotationReader->getMethodAnnotation($reflectionMethod, RequestMapping::class),
-                $this->annotationReader->getMethodAnnotation($reflectionMethod, HeaderBag::class),
-                $this->annotationReader->getMethodAnnotation($reflectionMethod, ParameterBag::class),
-                $this->annotationReader->getMethodAnnotation($reflectionMethod, RequestBody::class),
+                $this->getHeaderBag($reflectionMethod),
+                $this->getParameterBag($reflectionMethod),
+                $requestBody,
                 $this->getResponseType($reflectionMethod),
+                $this->getRequestType($reflectionMethod, $requestBody),
                 $this->getArguments($reflectionMethod)
             );
+    }
+
+    private function getHeaderBag(ReflectionMethod $reflectionMethod): HeaderBag
+    {
+        $headerBag = $this->annotationReader->getMethodAnnotation($reflectionMethod, HeaderBag::class);
+
+        return $headerBag ?? new HeaderBag([]);
+    }
+
+    private function getParameterBag(ReflectionMethod $reflectionMethod): ParameterBag
+    {
+        $parameterBag = $this->annotationReader->getMethodAnnotation($reflectionMethod, ParameterBag::class);
+
+        return $parameterBag ?? new ParameterBag([]);
+    }
+
+    private function getRequestType(ReflectionMethod $reflectionMethod, ?RequestBody $requestBody): ?string
+    {
+        if (null === $requestBody) {
+            return null;
+        }
+
+        foreach ($reflectionMethod->getParameters() as $parameter) {
+            if ($requestBody->getArgumentName() === $parameter->getName()) {
+                return
+                    null === $parameter->getType()
+                        ? null
+                        : $parameter->getType()->getName();
+            }
+        }
+
+        return null;
     }
 
     private function getArguments(ReflectionMethod $reflectionMethod): array

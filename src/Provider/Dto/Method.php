@@ -22,12 +22,12 @@ class Method
     private $request;
 
     /**
-     * @var HeaderBag|null
+     * @var HeaderBag
      */
     private $headersBag;
 
     /**
-     * @var ParameterBag|null
+     * @var ParameterBag
      */
     private $parametersBag;
 
@@ -46,13 +46,19 @@ class Method
      */
     private $arguments;
 
+    /**
+     * @var string
+     */
+    private $requestType;
+
     public function __construct(
         string $name,
         RequestMapping $request,
-        ?HeaderBag $headersBag,
-        ?ParameterBag $parametersBag,
+        HeaderBag $headersBag,
+        ParameterBag $parametersBag,
         ?RequestBody $requestBody,
         ?string $responseType,
+        ?string $requestType,
         array $arguments
     ) {
         $this->name = $name;
@@ -61,6 +67,7 @@ class Method
         $this->parametersBag = $parametersBag;
         $this->requestBody = $requestBody;
         $this->responseType = $responseType;
+        $this->requestType = $requestType;
         $this->arguments = $arguments;
     }
 
@@ -74,12 +81,12 @@ class Method
         return $this->request;
     }
 
-    public function getHeadersBag(): ?HeaderBag
+    public function getHeadersBag(): HeaderBag
     {
         return $this->headersBag;
     }
 
-    public function getParametersBag(): ?ParameterBag
+    public function getParametersBag(): ParameterBag
     {
         return $this->parametersBag;
     }
@@ -97,5 +104,10 @@ class Method
     public function getArguments(): array
     {
         return $this->arguments;
+    }
+
+    public function getRequestType(): string
+    {
+        return $this->requestType;
     }
 }

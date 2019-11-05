@@ -42,10 +42,11 @@ final class ReflectionMethodsProviderTest extends AbstractAnnotationTestCase
                         'requestType' => 'application/json',
                         'responseType' => 'application/xml'
                     ]),
-                    null,
-                    null,
+                    new HeaderBag([]),
+                    new ParameterBag([]),
                     null,
                     'array',
+                    null,
                     []
                 ),
             ]
@@ -63,9 +64,10 @@ final class ReflectionMethodsProviderTest extends AbstractAnnotationTestCase
                     new HeaderBag([
                         'value' => [new Header(['value' => 'Content-type: application/json'])]
                     ]),
-                    null,
+                    new ParameterBag([]),
                     null,
                     'string',
+                    null,
                     []
                 ),
             ]
@@ -80,12 +82,13 @@ final class ReflectionMethodsProviderTest extends AbstractAnnotationTestCase
                         'value' => '/some/third',
                         'method' => 'GET',
                     ]),
-                    null,
+                    new HeaderBag([]),
                     new ParameterBag([
                         'value' => [new Parameter(['argumentName' => 'id', 'alias' => 'thirdId'])]
                     ]),
                     null,
                     'array',
+                    null,
                     [new Argument('id', 'int')]
                 ),
             ]
@@ -100,10 +103,11 @@ final class ReflectionMethodsProviderTest extends AbstractAnnotationTestCase
                         'value' => '/some/fourth',
                         'method' => 'POST',
                     ]),
-                    null,
-                    null,
+                    new HeaderBag([]),
+                    new ParameterBag([]),
                     new RequestBody(['argumentName' => 'theBody']),
                     SomeResponseBody::class,
+                    SomeRequestBody::class,
                     [new Argument('theBody', SomeRequestBody::class)]
                 ),
             ]
