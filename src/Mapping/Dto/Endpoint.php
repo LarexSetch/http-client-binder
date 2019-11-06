@@ -9,6 +9,11 @@ use HttpClientBinder\Mapping\Enum\HttpMethod;
 final class Endpoint
 {
     /**
+     * @var string
+     */
+    private $name;
+
+    /**
      * @var HttpMethod
      */
     private $method;
@@ -24,6 +29,11 @@ final class Endpoint
     private $headerBag;
 
     /**
+     * @var UrlParameterBag
+     */
+    private $parameterBag;
+
+    /**
      * @var ResponseBody
      */
     private $responseBody;
@@ -33,26 +43,27 @@ final class Endpoint
      */
     private $requestBody;
 
-    /**
-     * Endpoint constructor.
-     * @param HttpMethod $method
-     * @param Url $url
-     * @param HttpHeaderBag $headerBag
-     * @param ResponseBody $responseBody
-     * @param RequestBody $requestBody
-     */
     public function __construct(
+        string $name,
         HttpMethod $method,
         Url $url,
+        UrlParameterBag $parameterBag,
         HttpHeaderBag $headerBag,
         ResponseBody $responseBody,
         ?RequestBody $requestBody
     ) {
+        $this->name = $name;
         $this->method = $method;
         $this->url = $url;
+        $this->parameterBag = $parameterBag;
         $this->headerBag = $headerBag;
         $this->responseBody = $responseBody;
         $this->requestBody = $requestBody;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     public function getMethod(): HttpMethod
@@ -63,6 +74,11 @@ final class Endpoint
     public function getUrl(): Url
     {
         return $this->url;
+    }
+
+    public function getParameterBag(): UrlParameterBag
+    {
+        return $this->parameterBag;
     }
 
     public function getHeaderBag(): HttpHeaderBag

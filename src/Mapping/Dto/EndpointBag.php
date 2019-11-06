@@ -20,6 +20,9 @@ final class EndpointBag
         $this->endpoints = $endpoints;
     }
 
+    /**
+     * @return Endpoint[]
+     */
     public function getEndpoints(): array
     {
         return $this->endpoints;

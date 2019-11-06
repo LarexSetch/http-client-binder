@@ -38,6 +38,11 @@ abstract class Enum
         );
     }
 
+    public function toString(): string
+    {
+        return (string)$this->value;
+    }
+
     public static function toArray(): array
     {
         $class = get_called_class();

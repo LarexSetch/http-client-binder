@@ -9,8 +9,10 @@ use HttpClientBinder\Annotation\HeaderBag;
 use HttpClientBinder\Annotation\ParameterBag;
 use HttpClientBinder\Annotation\RequestBody;
 use HttpClientBinder\Annotation\RequestMapping;
+use HttpClientBinder\Mapping\Dto\ResponseBody;
 use HttpClientBinder\Provider\Dto\Argument;
 use HttpClientBinder\Provider\Dto\Method;
+use HttpClientBinder\Provider\Exception\AnnotationNotDefinedProviderException;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionParameter;
@@ -38,14 +40,18 @@ final class ReflectionMethodsProvider implements MethodsProvider
         return array_map([$this, 'createMethod'], $this->reflectionClass->getMethods());
     }
 
+    /**
+     * @throws AnnotationNotDefinedProviderException
+     */
     private function createMethod(ReflectionMethod $reflectionMethod): Method
     {
+        /** @var RequestBody $requestBody */
         $requestBody = $this->annotationReader->getMethodAnnotation($reflectionMethod, RequestBody::class);
 
         return
             new Method(
                 $reflectionMethod->getName(),
-                $this->annotationReader->getMethodAnnotation($reflectionMethod, RequestMapping::class),
+                $this->getRequestMapping($reflectionMethod),
                 $this->getHeaderBag($reflectionMethod),
                 $this->getParameterBag($reflectionMethod),
                 $requestBody,
@@ -53,6 +59,21 @@ final class ReflectionMethodsProvider implements MethodsProvider
                 $this->getRequestType($reflectionMethod, $requestBody),
                 $this->getArguments($reflectionMethod)
             );
+    }
+
+    /**
+     * @throws AnnotationNotDefinedProviderException
+     */
+    private function getRequestMapping(ReflectionMethod $reflectionMethod): RequestMapping
+    {
+        /** @var RequestMapping $requestMapping */
+        $requestMapping = $this->annotationReader->getMethodAnnotation($reflectionMethod, RequestMapping::class);
+
+        if(null === $requestMapping) {
+            throw new AnnotationNotDefinedProviderException('The annotation @RequestMapping is required');
+        }
+
+        return $requestMapping;
     }
 
     private function getHeaderBag(ReflectionMethod $reflectionMethod): HeaderBag

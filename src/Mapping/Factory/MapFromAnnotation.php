@@ -48,6 +48,7 @@ final class MapFromAnnotation implements MappingFactory
         $endpoints = array_map(function (Method $method) {
             return
                 new Endpoint(
+                    $method->getName(),
                     HttpMethod::fromValue($method->getRequest()->getMethod()),
                     new Url(
                         $method->getRequest()->getUri(),

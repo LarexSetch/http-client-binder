@@ -11,15 +11,14 @@ final class UrlParameterBag
      */
     private $parameters;
 
-    /**
-     * UrlParameterBag constructor.
-     * @param UrlParameter[] $parameters
-     */
     public function __construct(array $parameters)
     {
         $this->parameters = $parameters;
     }
 
+    /**
+     * @return UrlParameter[]
+     */
     public function getParameters(): array
     {
         return $this->parameters;

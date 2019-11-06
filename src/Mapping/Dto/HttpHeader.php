@@ -9,18 +9,28 @@ final class HttpHeader
     /**
      * @var string
      */
-    private $value;
+    private $name;
 
     /**
-     * HttpHeader constructor.
-     * @param string $value
+     * @var string[]
      */
-    public function __construct(string $value)
+    private $value;
+
+    public function __construct(string $name, array $value)
     {
+        $this->name = $name;
         $this->value = $value;
     }
 
-    public function getValue(): string
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getValue(): array
     {
         return $this->value;
     }
