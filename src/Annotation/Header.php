@@ -18,15 +18,31 @@ final class Header
      * @var string
      * @Required
      */
-    private $value;
+    private $header;
+
+    /**
+     * @var string[]
+     * @Required
+     */
+    private $values;
 
     public function __construct(array $values)
     {
-        $this->value = $values['value'];
+        $this->header = $values['value'];
+        if(is_array($values['values'])) {
+            $this->values = $values['values'];
+        } else {
+            $this->values = [$values['values']];
+        }
     }
 
-    public function getValue(): string
+    public function getHeader(): string
     {
-        return $this->value;
+        return $this->header;
+    }
+
+    public function getValues(): array
+    {
+        return $this->values;
     }
 }

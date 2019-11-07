@@ -11,6 +11,7 @@ interface BodyResolver
 {
     /**
      * @return null|StreamInterface|string
+     * @throws CannotResolveBodyException
      */
     public function resolve(Endpoint $endpoint, array $arguments);
 }

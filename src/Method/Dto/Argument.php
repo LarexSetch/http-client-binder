@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Provider\Dto;
+namespace HttpClientBinder\Mapping\Factory\Provider\Dto;
 
 class Argument
 {
@@ -12,8 +12,7 @@ class Argument
     private $name;
 
     /**
-     * @todo enum
-     * @var string|null
+     * @var string
      */
     private $type;
 
@@ -22,7 +21,7 @@ class Argument
      * @param string $name
      * @param string $type
      */
-    public function __construct(string $name, ?string $type)
+    public function __construct(string $name, string $type)
     {
         $this->name = $name;
         $this->type = $type;
@@ -33,7 +32,7 @@ class Argument
         return $this->name;
     }
 
-    public function getType(): ?string
+    public function getType(): string
     {
         return $this->type;
     }

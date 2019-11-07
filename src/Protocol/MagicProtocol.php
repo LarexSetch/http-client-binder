@@ -7,7 +7,7 @@ namespace HttpClientBinder\Protocol;
 use HttpClientBinder\Mapping\Dto\Client;
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use HttpClientBinder\Protocol\RequestBuilder\RequestBuilder;
-use HttpClientBinder\Protocol\ResponseAdapter\ResponseAdapter;
+use HttpClientBinder\Protocol\ResponseAssembler\ResponseAssembler;
 
 final class MagicProtocol
 {
@@ -27,31 +27,37 @@ final class MagicProtocol
     private $requestBuilder;
 
     /**
-     * @var ResponseAdapter
+     * @var ResponseAssembler
      */
-    private $responseAdapter;
+    private $responseAssembler;
 
     public function __construct(
         Client $client,
         RemoteCallFactory $remoteCallFactory,
         RequestBuilder $requestBuilder,
-        ResponseAdapter $responseAdapter
+        ResponseAssembler $responseAssembler
     ) {
         $this->client = $client;
         $this->remoteCallFactory = $remoteCallFactory;
         $this->requestBuilder = $requestBuilder;
-        $this->responseAdapter = $responseAdapter;
+        $this->responseAssembler = $responseAssembler;
     }
 
+    /**
+     * @throws UnexpectedEndpointException
+     */
     public function __call(string $name, array $arguments)
     {
         $endpoint = $this->getEndpoint($name);
         $remoteCall = $this->remoteCallFactory->build($this->client, $endpoint);
         $response = $remoteCall->invoke($this->requestBuilder->build($endpoint, $arguments));
 
-        return $this->responseAdapter->assemble($response, $endpoint);
+        return $this->responseAssembler->assemble($response, $endpoint);
     }
 
+    /**
+     * @throws UnexpectedEndpointException
+     */
     private function getEndpoint(string $name): Endpoint
     {
         foreach($this->client->getEndpointBag()->getEndpoints() as $endpoint){
@@ -60,6 +66,6 @@ final class MagicProtocol
             }
         }
 
-        // todo throw exception
+        throw new UnexpectedEndpointException(sprintf('Endpoint with name %s not found', $name));
     }
 }

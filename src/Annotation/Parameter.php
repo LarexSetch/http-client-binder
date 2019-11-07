@@ -25,10 +25,16 @@ final class Parameter
      */
     private $alias;
 
+    /**
+     * @var string
+     */
+    private $type;
+
     public function __construct(array $values)
     {
         $this->argumentName = $values["argument"];
         $this->alias = $values["alias"];
+        $this->type = $values["type"] ?? 'query';
     }
 
     public function getArgumentName(): string
@@ -39,5 +45,10 @@ final class Parameter
     public function getAlias(): string
     {
         return $this->alias;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
     }
 }

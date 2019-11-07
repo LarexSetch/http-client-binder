@@ -9,28 +9,45 @@ use HttpClientBinder\Mapping\Enum\UrlParameterType;
 final class UrlParameter
 {
     /**
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @var string
+     */
+    private $alias;
+
+    /**
      * @var UrlParameterType
      */
     private $type;
 
     /**
-     * @var string
+     * UrlParameter constructor.
+     * @param string $name
+     * @param string $alias
+     * @param UrlParameterType $type
      */
-    private $key;
-
-    public function __construct(UrlParameterType $parameterType, string $key)
+    public function __construct(string $name, string $alias, UrlParameterType $type)
     {
-        $this->type = $parameterType;
-        $this->key = $key;
+        $this->name = $name;
+        $this->alias = $alias;
+        $this->type = $type;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getAlias(): string
+    {
+        return $this->alias;
     }
 
     public function getType(): UrlParameterType
     {
         return $this->type;
-    }
-
-    public function getKey(): string
-    {
-        return $this->key;
     }
 }

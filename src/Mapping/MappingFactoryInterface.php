@@ -4,7 +4,7 @@ namespace HttpClientBinder\Mapping\Factory;
 
 use HttpClientBinder\Mapping\Dto\Client;
 
-interface MappingFactory
+interface MappingFactoryInterface
 {
     public function build(): Client;
 }

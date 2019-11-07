@@ -15,13 +15,11 @@ final class BodyResolverStrategy implements BodyResolver
      */
     private $serializer;
 
-    private function __construct(SerializerInterface $serializer) {
+    public function __construct(SerializerInterface $serializer)
+    {
         $this->serializer = $serializer;
     }
 
-    /**
-     * @return null|StreamInterface|string
-     */
     public function resolve(Endpoint $endpoint, array $arguments)
     {
         if (
@@ -36,9 +34,10 @@ final class BodyResolverStrategy implements BodyResolver
             return $body;
         }
 
-        if(is_object($body)) {
+        if (is_object($body)) {
             return $this->serializer->serialize($body, $endpoint->getRequestBody()->getSerializationType()->toString());
         }
-        //todo exception
+
+        throw new CannotResolveBodyException(sprintf('Unsupported type %s', gettype($body)));
     }
 }

@@ -29,36 +29,29 @@ final class Endpoint
     private $headerBag;
 
     /**
-     * @var UrlParameterBag
+     * @var string
      */
-    private $parameterBag;
+    private $responseType;
 
     /**
-     * @var ResponseBody
+     * @var string|null
      */
-    private $responseBody;
-
-    /**
-     * @var RequestBody|null
-     */
-    private $requestBody;
+    private $requestType;
 
     public function __construct(
         string $name,
         HttpMethod $method,
         Url $url,
-        UrlParameterBag $parameterBag,
         HttpHeaderBag $headerBag,
-        ResponseBody $responseBody,
-        ?RequestBody $requestBody
+        string $responseType,
+        ?string $requestType
     ) {
         $this->name = $name;
         $this->method = $method;
         $this->url = $url;
-        $this->parameterBag = $parameterBag;
         $this->headerBag = $headerBag;
-        $this->responseBody = $responseBody;
-        $this->requestBody = $requestBody;
+        $this->responseType = $responseType;
+        $this->requestType = $requestType;
     }
 
     public function getName(): string
@@ -76,23 +69,18 @@ final class Endpoint
         return $this->url;
     }
 
-    public function getParameterBag(): UrlParameterBag
-    {
-        return $this->parameterBag;
-    }
-
     public function getHeaderBag(): HttpHeaderBag
     {
         return $this->headerBag;
     }
 
-    public function getResponseBody(): ResponseBody
+    public function getResponseType(): string
     {
-        return $this->responseBody;
+        return $this->responseType;
     }
 
-    public function getRequestBody(): ?RequestBody
+    public function getRequestType(): ?string
     {
-        return $this->requestBody;
+        return $this->requestType;
     }
 }

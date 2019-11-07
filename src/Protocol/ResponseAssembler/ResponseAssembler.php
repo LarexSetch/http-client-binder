@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Protocol\ResponseAdapter;
+namespace HttpClientBinder\Protocol\ResponseAssembler;
 
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use Psr\Http\Message\ResponseInterface;
 
-interface ResponseAdapter
+interface ResponseAssembler
 {
     public function assemble(ResponseInterface $response, Endpoint $endpoint);
 }

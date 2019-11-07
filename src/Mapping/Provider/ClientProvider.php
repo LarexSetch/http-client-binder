@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Provider;
+namespace HttpClientBinder\Mapping\Factory\Provider;
 
 use HttpClientBinder\Annotation\Client;
 interface ClientProvider
