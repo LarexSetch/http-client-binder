@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Proxy;
 
-use HttpClientBinder\Mapping\Factory\MappingFactoryInterface;
-use HttpClientBinder\Mapping\Factory\Provider\MethodsProviderInterface;
+use HttpClientBinder\Mapping\MappingBuilderFactoryInterface;
 use HttpClientBinder\Method\MethodsProviderFactoryInterface;
 use HttpClientBinder\Protocol\MagicProtocol;
 use HttpClientBinder\Proxy\Dto\RenderData;
@@ -14,9 +13,9 @@ use JMS\Serializer\SerializerInterface;
 final class ProxyFactory implements ProxyFactoryInterface
 {
     /**
-     * @var MappingFactoryInterface
+     * @var MappingBuilderFactoryInterface
      */
-    private $mappingFactory;
+    private $mappingBuilderFactory;
 
     /**
      * @var SerializerInterface
@@ -38,14 +37,14 @@ final class ProxyFactory implements ProxyFactoryInterface
      */
     private $methodsProviderFactory;
 
-    private function __construct(
-        MappingFactoryInterface $mappingFactory,
+    public function __construct(
+        MappingBuilderFactoryInterface $mappingBuilderFactory,
         SerializerInterface $serializer,
         SourceRenderInterface $sourceRender,
         SourceStorageInterface $sourceStorage,
         MethodsProviderFactoryInterface $methodsProviderFactory
     ) {
-        $this->mappingFactory = $mappingFactory;
+        $this->mappingBuilderFactory = $mappingBuilderFactory;
         $this->serializer = $serializer;
         $this->sourceRender = $sourceRender;
         $this->sourceStorage = $sourceStorage;
@@ -57,10 +56,10 @@ final class ProxyFactory implements ProxyFactoryInterface
      */
     public function build(string $interfaceName)
     {
-        $source = $this->sourceRender->render($this->createRenderData($interfaceName));
-        $this->sourceStorage->store($interfaceName, $source);
-        $this->sourceStorage->import($interfaceName);
         $className = $this->getProxyClassName($interfaceName);
+        $source = $this->sourceRender->render($this->createRenderData($interfaceName));
+        $this->sourceStorage->store($className, $source);
+        $this->sourceStorage->import($className);
 
         return new $className($this->serializer);
     }
@@ -72,7 +71,7 @@ final class ProxyFactory implements ProxyFactoryInterface
                 $this->getProxyClassName($interfaceName),
                 $interfaceName,
                 MagicProtocol::class,
-                $this->serializer->serialize($this->mappingFactory->build(), 'json'),
+                $this->serializer->serialize($this->mappingBuilderFactory->create($interfaceName)->build(), 'json'),
                 $this->methodsProviderFactory->build($interfaceName)->provide()
             );
     }
@@ -82,7 +81,13 @@ final class ProxyFactory implements ProxyFactoryInterface
         return
             sprintf(
                 "%sProxy",
-                str_replace("Interface", "", $interfaceName)
+                strtr(
+                    $interfaceName,
+                    [
+                        "Interface" => "",
+                        "\\" => "_"
+                    ]
+                )
             );
     }
 }

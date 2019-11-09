@@ -5,21 +5,31 @@ declare(strict_types=1);
 namespace HttpClientBinder\Mapping\Dto;
 
 use HttpClientBinder\Mapping\Enum\UrlParameterType;
+use JMS\Serializer\Annotation as Serializer;
 
 final class UrlParameter
 {
     /**
      * @var string
+     *
+     * @Serializer\Type("string")
+     * @Serializer\SerializedName("name")
      */
     private $name;
 
     /**
      * @var string
+     *
+     * @Serializer\Type("string")
+     * @Serializer\SerializedName("alias")
      */
     private $alias;
 
     /**
      * @var UrlParameterType
+     *
+     * @Serializer\Type("HttpClientBinder\Mapping\Enum\UrlParameterType")
+     * @Serializer\SerializedName("type")
      */
     private $type;
 

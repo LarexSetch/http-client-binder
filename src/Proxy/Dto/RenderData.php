@@ -46,4 +46,29 @@ final class RenderData
         $this->jsonMappings = $jsonMappings;
         $this->methods = $methods;
     }
+
+    public function getClassName(): string
+    {
+        return $this->className;
+    }
+
+    public function getInterfaceName(): string
+    {
+        return $this->interfaceName;
+    }
+
+    public function getProtocolClassName(): string
+    {
+        return $this->protocolClassName;
+    }
+
+    public function getJsonMappings(): string
+    {
+        return $this->jsonMappings;
+    }
+
+    public function getMethods(): array
+    {
+        return $this->methods;
+    }
 }

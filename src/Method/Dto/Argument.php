@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Mapping\Factory\Provider\Dto;
+namespace HttpClientBinder\Method\Dto;
 
 class Argument
 {

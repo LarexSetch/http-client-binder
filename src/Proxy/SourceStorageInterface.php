@@ -6,7 +6,7 @@ namespace HttpClientBinder\Proxy;
 
 interface SourceStorageInterface
 {
-    public function store(string $className, $source): void;
+    public function store(string $className, string $source): void;
 
     public function import(string $className): void;
 

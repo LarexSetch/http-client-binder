@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HttpClientBinder\Base;
 
 use BadMethodCallException;
+use InvalidArgumentException;
 use ReflectionClass;
 
 // TODO implementation and test
@@ -60,7 +61,17 @@ abstract class Enum
      */
     public static function fromValue($value): self
     {
+        $result = array_search($value, static::toArray());
 
+        if (false === $result) {
+            throw new InvalidArgumentException(sprintf(
+                "Unsupported value for enum %s available values [%s]",
+                get_called_class(),
+                implode(static::toArray())
+            ));
+        }
+
+        return new static($result);
     }
 
     final private function __construct($value)

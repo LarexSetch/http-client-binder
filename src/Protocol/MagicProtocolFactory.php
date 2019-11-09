@@ -40,6 +40,6 @@ final class MagicProtocolFactory implements MagicProtocolFactoryInterface
 
     private function deserializeMappings(string $mappings): Client
     {
-        return $this->serializer->deserialize($mappings, 'json', Client::class);
+        return $this->serializer->deserialize($mappings, Client::class, 'json');
     }
 }

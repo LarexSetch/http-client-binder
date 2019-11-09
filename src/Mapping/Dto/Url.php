@@ -4,15 +4,23 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Mapping\Dto;
 
+use JMS\Serializer\Annotation as Serializer;
+
 final class Url
 {
     /**
      * @var string
+     *
+     * @Serializer\Type("string")
+     * @Serializer\SerializedName("pattern")
      */
     private $value;
 
     /**
      * @var UrlParameterBag
+     *
+     * @Serializer\Type("array<HttpClientBinder\Mapping\Dto\UrlParameterBag>")
+     * @Serializer\SerializedName("parameterBag")
      */
     private $parameterBag;
 

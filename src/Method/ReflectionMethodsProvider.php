@@ -2,16 +2,15 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Mapping\Factory\Provider;
+namespace HttpClientBinder\Method;
 
-use Doctrine\Common\Annotations\Reader;
-use HttpClientBinder\Mapping\Factory\Provider\Dto\Argument;
-use HttpClientBinder\Mapping\Factory\Provider\Dto\Method;
+use HttpClientBinder\Method\Dto\Argument;
+use HttpClientBinder\Method\Dto\Method;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionParameter;
 
-final class ReflectionMethodsProviderInterface implements MethodsProviderInterface
+final class ReflectionMethodsProvider implements MethodsProviderInterface
 {
     /**
      * @var ReflectionClass

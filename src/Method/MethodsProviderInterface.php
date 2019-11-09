@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
+namespace HttpClientBinder\Method;
 
-namespace HttpClientBinder\Mapping\Factory\Provider;
-
-use HttpClientBinder\Mapping\Factory\Provider\Dto\Method;
+use HttpClientBinder\Method\Dto\Method;
 
 interface MethodsProviderInterface
 {

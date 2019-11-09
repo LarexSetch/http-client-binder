@@ -4,15 +4,23 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Mapping\Dto;
 
+use JMS\Serializer\Annotation as Serializer;
+
 final class HttpHeader
 {
     /**
      * @var string
+     *
+     * @Serializer\Type("string")
+     * @Serializer\SerializedName("name")
      */
     private $name;
 
     /**
      * @var string[]
+     *
+     * @Serializer\Type("array<string>")
+     * @Serializer\SerializedName("value")
      */
     private $value;
 

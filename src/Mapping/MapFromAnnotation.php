@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Mapping\Factory;
+namespace HttpClientBinder\Mapping;
 
 use Doctrine\Common\Annotations\Reader;
+use DomainException;
 use HttpClientBinder\Annotation\Header;
 use HttpClientBinder\Annotation\HeaderBag;
 use HttpClientBinder\Annotation\Parameter;
@@ -21,22 +22,16 @@ use HttpClientBinder\Mapping\Dto\UrlParameter;
 use HttpClientBinder\Mapping\Dto\UrlParameterBag;
 use HttpClientBinder\Mapping\Enum\HttpMethod;
 use HttpClientBinder\Mapping\Enum\UrlParameterType;
-use HttpClientBinder\Mapping\Factory\Provider\ClientProvider;
-use HttpClientBinder\Mapping\Factory\Provider\Dto\Method;
-use HttpClientBinder\Mapping\Factory\Provider\MethodsProviderInterface;
+use HttpClientBinder\Method\Dto\Method;
+use HttpClientBinder\Method\MethodsProviderInterface;
 use ReflectionClass;
 
-final class MapFromAnnotation implements MappingFactoryInterface
+final class MapFromAnnotation implements MappingBuilderInterface
 {
     /**
      * @var ReflectionClass
      */
     private $reflectionClass;
-
-    /**
-     * @var ClientProvider
-     */
-    private $clientProvider;
 
     /**
      * @var MethodsProviderInterface
@@ -50,12 +45,10 @@ final class MapFromAnnotation implements MappingFactoryInterface
 
     public function __construct(
         ReflectionClass $reflectionClass,
-        ClientProvider $clientProvider,
         MethodsProviderInterface $methodsProvider,
         Reader $annotationReader
     ) {
         $this->reflectionClass = $reflectionClass;
-        $this->clientProvider = $clientProvider;
         $this->methodsProvider = $methodsProvider;
         $this->annotationReader = $annotationReader;
     }
@@ -63,8 +56,7 @@ final class MapFromAnnotation implements MappingFactoryInterface
     public function build(): Client
     {
         $endpoints = array_map([$this, 'createEndpoint'], $this->methodsProvider->provide());
-
-        $client = $this->clientProvider->provide();
+        $client = $this->getClientAnnotation();
 
         return new Client($client->getBaseUrl(), new EndpointBag($endpoints));
     }
@@ -105,6 +97,9 @@ final class MapFromAnnotation implements MappingFactoryInterface
                 $this->reflectionClass->getMethod($method->getName()),
                 ParameterBag::class
             );
+        if(null === $parameterBag) {
+            return new UrlParameterBag([]);
+        }
 
         return
             new UrlParameterBag(array_map(
@@ -128,6 +123,9 @@ final class MapFromAnnotation implements MappingFactoryInterface
                 $this->reflectionClass->getMethod($method->getName()),
                 HeaderBag::class
             );
+        if(null === $headerBag) {
+            return new HttpHeaderBag([]);
+        }
 
         return
             new HttpHeaderBag(
@@ -140,7 +138,7 @@ final class MapFromAnnotation implements MappingFactoryInterface
             );
     }
 
-    private function getRequestType(Method $method): string
+    private function getRequestType(Method $method): ?string
     {
         /** @var RequestBody $requestBody */
         $requestBody =
@@ -155,7 +153,7 @@ final class MapFromAnnotation implements MappingFactoryInterface
             }
         }
 
-        //TODO throw undefined argument
+        return null;
     }
 
     private function getRequestMapping(Method $method): RequestMapping
@@ -163,10 +161,26 @@ final class MapFromAnnotation implements MappingFactoryInterface
         /** @var RequestMapping $requestMapping */
         $requestMapping =
             $this->annotationReader->getMethodAnnotation(
-                $this->reflectionClass->getMethod($method),
+                $this->reflectionClass->getMethod($method->getName()),
                 RequestMapping::class
             );
 
         return $requestMapping;
+    }
+
+    private function getClientAnnotation(): \HttpClientBinder\Annotation\Client
+    {
+        /** @var \HttpClientBinder\Annotation\Client $clientAnnotation */
+        $clientAnnotation =
+            $this->annotationReader->getClassAnnotation(
+                $this->reflectionClass,
+                \HttpClientBinder\Annotation\Client::class
+            );
+
+        if(null === $clientAnnotation) {
+            throw new DomainException("You must define the Client annotation");
+        }
+
+        return $clientAnnotation;
     }
 }

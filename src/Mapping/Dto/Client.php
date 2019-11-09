@@ -4,15 +4,23 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Mapping\Dto;
 
+use JMS\Serializer\Annotation as Serializer;
+
 final class Client
 {
     /**
      * @var string
+     *
+     * @Serializer\Type("string")
+     * @Serializer\SerializedName("baseUrl")
      */
     private $baseUrl;
 
     /**
      * @var EndpointBag
+     *
+     * @Serializer\Type("HttpClientBinder\Mapping\Dto\EndpointBag")
+     * @Serializer\SerializedName("endpointBag")
      */
     private $endpointBag;
 

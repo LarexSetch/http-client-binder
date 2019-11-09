@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Mapping\Dto;
 
+use JMS\Serializer\Annotation as Serializer;
+
 final class EndpointBag
 {
     /**
      * @var Endpoint[]
+     *
+     * @Serializer\Type("array<HttpClientBinder\Mapping\Dto\Endpoint>")
+     * @Serializer\SerializedName("endpoints")
      */
     private $endpoints;
 
