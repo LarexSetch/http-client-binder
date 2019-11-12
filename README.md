@@ -1,4 +1,4 @@
-# symfony-client-binder
+# Http client binder
 Request
 
 Enter container with bash
