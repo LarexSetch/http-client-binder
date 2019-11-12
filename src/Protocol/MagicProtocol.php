@@ -6,6 +6,7 @@ namespace HttpClientBinder\Protocol;
 
 use HttpClientBinder\Mapping\Dto\Client;
 use HttpClientBinder\Mapping\Dto\Endpoint;
+use HttpClientBinder\Protocol\RemoteCall\RemoteCallFactory;
 use HttpClientBinder\Protocol\RequestBuilder\RequestBuilder;
 use HttpClientBinder\Protocol\ResponseAssembler\ResponseAssembler;
 

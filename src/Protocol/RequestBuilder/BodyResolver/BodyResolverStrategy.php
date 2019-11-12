@@ -23,7 +23,7 @@ final class BodyResolverStrategy implements BodyResolver
     public function resolve(Endpoint $endpoint, array $arguments)
     {
         if (
-            null === $endpoint->getRequestBody() ||
+            null === $endpoint->getRequestType() ||
             !key_exists($endpoint->getRequestBody()->getArgumentName(), $arguments)
         ) {
             return null;

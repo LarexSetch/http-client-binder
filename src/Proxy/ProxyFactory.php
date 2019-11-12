@@ -71,7 +71,7 @@ final class ProxyFactory implements ProxyFactoryInterface
                 $this->getProxyClassName($interfaceName),
                 $interfaceName,
                 MagicProtocol::class,
-                $this->serializer->serialize($this->mappingBuilderFactory->create($interfaceName)->build(), 'json'),
+                $this->getJsonString($interfaceName),
                 $this->methodsProviderFactory->build($interfaceName)->provide()
             );
     }
@@ -88,6 +88,21 @@ final class ProxyFactory implements ProxyFactoryInterface
                         "\\" => "_"
                     ]
                 )
+            );
+    }
+
+    private function getJsonString(string $interfaceName): string
+    {
+        return
+            strtr(
+                $this->serializer
+                    ->serialize(
+                        $this->mappingBuilderFactory->create($interfaceName)->build(),
+                        'json'
+                    ),
+                [
+                    '\\\\' => '\\\\\\'
+                ]
             );
     }
 }

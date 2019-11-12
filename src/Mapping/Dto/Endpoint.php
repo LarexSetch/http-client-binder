@@ -18,9 +18,9 @@ final class Endpoint
     private $name;
 
     /**
-     * @var HttpMethod
+     * @var string
      *
-     * @Serializer\Type("HttpClientBinder\Mapping\Dto\HttpMethod")
+     * @Serializer\Type("string")
      * @Serializer\SerializedName("method")
      */
     private $method;
@@ -59,11 +59,11 @@ final class Endpoint
 
     public function __construct(
         string $name,
-        HttpMethod $method,
+        string $method,
         Url $url,
         HttpHeaderBag $headerBag,
         string $responseType,
-        ?string $requestType
+        ?string $requestType //TODO определять откуда брать тело для запроса
     ) {
         $this->name = $name;
         $this->method = $method;
@@ -78,7 +78,7 @@ final class Endpoint
         return $this->name;
     }
 
-    public function getMethod(): HttpMethod
+    public function getMethod(): string
     {
         return $this->method;
     }

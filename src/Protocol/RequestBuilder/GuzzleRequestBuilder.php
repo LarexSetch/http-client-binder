@@ -32,7 +32,7 @@ final class GuzzleRequestBuilder implements RequestBuilder
     {
         return
             new Request(
-                $endpoint->getMethod()->toString(),
+                $endpoint->getMethod(),
                 $this->urlResolver->resolve($endpoint, $arguments),
                 $this->resolveHeaders($endpoint),
                 $this->bodyResolver->resolve($endpoint, $arguments)

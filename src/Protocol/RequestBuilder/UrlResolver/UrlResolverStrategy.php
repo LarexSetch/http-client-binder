@@ -13,17 +13,17 @@ final class UrlResolverStrategy implements UrlResolver
     public function resolve(Endpoint $endpoint, array $arguments): string
     {
         return
-            strtr($endpoint->getUrl(), $this->getReplaceParameters($endpoint, $arguments)) .
+            strtr($endpoint->getUrl()->getValue(), $this->getReplaceParameters($endpoint, $arguments)) .
             $this->getQuery($endpoint, $arguments);
     }
 
     private function getReplaceParameters(Endpoint $endpoint, array $arguments): array
     {
         $replaceParameters = [];
-        foreach ($endpoint->getParameterBag()->getParameters() as $parameter) {
+        foreach ($endpoint->getUrl()->getParameterBag()->getParameters() as $parameter) {
             if ($this->isValid($parameter, $arguments) && UrlParameterType::PATH() === $parameter->getType()) {
-                $key = sprintf('{%s}', $parameter->getKey());
-                $replaceParameters[$key] = $arguments[$parameter->getKey()];
+                $key = sprintf('{%s}', $parameter->getName());
+                $replaceParameters[$key] = $arguments[$parameter->getName()];
             }
         }
 
@@ -43,9 +43,9 @@ final class UrlResolverStrategy implements UrlResolver
     private function getQueryParameters(Endpoint $endpoint, array $arguments): array
     {
         $queryParameters = [];
-        foreach ($endpoint->getParameterBag()->getParameters() as $parameter) {
+        foreach ($endpoint->getUrl()->getParameterBag()->getParameters() as $parameter) {
             if ($this->isValid($parameter, $arguments) && UrlParameterType::QUERY() === $parameter->getType()) {
-                $queryParameters[$parameter->getKey()] = $arguments[$parameter->getKey()];
+                $queryParameters[$parameter->getName()] = $arguments[$parameter->getName()];
             }
         }
 
@@ -55,7 +55,7 @@ final class UrlResolverStrategy implements UrlResolver
     private function isValid(UrlParameter $parameter, array $arguments): bool
     {
         return
-            key_exists($parameter->getKey(), $arguments) &&
-            is_scalar($arguments[$parameter->getKey()]);
+            key_exists($parameter->getName(), $arguments) &&
+            is_scalar($arguments[$parameter->getName()]);
     }
 }

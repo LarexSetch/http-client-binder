@@ -7,9 +7,6 @@ namespace HttpClientBinder\Protocol\RemoteCall;
 use GuzzleHttp\Client as GuzzleClient;
 use HttpClientBinder\Mapping\Dto\Client;
 use HttpClientBinder\Mapping\Dto\Endpoint;
-use HttpClientBinder\Protocol\EndpointCall;
-use HttpClientBinder\Protocol\RemoteCall;
-use HttpClientBinder\Protocol\RemoteCallFactory;
 
 final class EndpointCallFactory implements RemoteCallFactory
 {

@@ -11,6 +11,8 @@ use HttpClientBinder\Annotation\HeaderBag;
 use HttpClientBinder\Annotation\Parameter;
 use HttpClientBinder\Annotation\ParameterBag;
 use HttpClientBinder\Annotation\RequestMapping;
+use JMS\Serializer\Annotation\SerializedName;
+use JMS\Serializer\Annotation\Type;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -24,6 +26,8 @@ abstract class AbstractAnnotationTestCase extends TestCase
         $this->registerAnnotation(Parameter::class);
         $this->registerAnnotation(ParameterBag::class);
         $this->registerAnnotation(RequestMapping::class);
+        $this->registerAnnotation(Type::class);
+        $this->registerAnnotation(SerializedName::class);
     }
 
     /**

@@ -74,11 +74,9 @@ final class MapFromAnnotation implements MappingBuilderInterface
             );
     }
 
-    private function getHttpMethod(Method $method): HttpMethod
+    private function getHttpMethod(Method $method): string
     {
-        $requestMapping = $this->getRequestMapping($method);
-
-        return HttpMethod::fromValue($requestMapping->getMethod());
+        return $this->getRequestMapping($method)->getMethod();
     }
 
     private function getUrl(Method $method): Url

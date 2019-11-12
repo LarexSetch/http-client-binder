@@ -19,7 +19,7 @@ final class Url
     /**
      * @var UrlParameterBag
      *
-     * @Serializer\Type("array<HttpClientBinder\Mapping\Dto\UrlParameterBag>")
+     * @Serializer\Type("HttpClientBinder\Mapping\Dto\UrlParameterBag")
      * @Serializer\SerializedName("parameterBag")
      */
     private $parameterBag;
