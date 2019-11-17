@@ -6,25 +6,23 @@ namespace HttpClientBinder\Protocol\RequestBuilder;
 
 use GuzzleHttp\Psr7\Request;
 use HttpClientBinder\Mapping\Dto\Endpoint;
-use HttpClientBinder\Protocol\RequestBuilder\BodyResolver\BodyResolver;
-use HttpClientBinder\Protocol\RequestBuilder\UrlResolver\UrlResolver;
 use Psr\Http\Message\RequestInterface;
 
 final class GuzzleRequestBuilder implements RequestBuilder
 {
     /**
-     * @var UrlResolver
+     * @var UrlBuilderInterface
      */
-    private $urlResolver;
+    private $urlBuilder;
 
     /**
-     * @var BodyResolver
+     * @var BodyResolverInterface
      */
     private $bodyResolver;
 
-    public function __construct(UrlResolver $urlResolver, BodyResolver $bodyResolver)
+    public function __construct(UrlBuilderInterface $urlBuilder, BodyResolverInterface $bodyResolver)
     {
-        $this->urlResolver = $urlResolver;
+        $this->urlBuilder = $urlBuilder;
         $this->bodyResolver = $bodyResolver;
     }
 
@@ -33,13 +31,13 @@ final class GuzzleRequestBuilder implements RequestBuilder
         return
             new Request(
                 $endpoint->getMethod(),
-                $this->urlResolver->resolve($endpoint, $arguments),
-                $this->resolveHeaders($endpoint),
+                $this->urlBuilder->build($endpoint, $arguments),
+                $this->assembleHeaders($endpoint),
                 $this->bodyResolver->resolve($endpoint, $arguments)
             );
     }
 
-    private function resolveHeaders(Endpoint $endpoint): array
+    private function assembleHeaders(Endpoint $endpoint): array
     {
         $headers = [];
         foreach ($endpoint->getHeaderBag()->getHeaders() as $header) {

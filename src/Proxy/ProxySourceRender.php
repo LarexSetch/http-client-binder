@@ -60,7 +60,7 @@ END;
                             $this->getMethodBody(),
                             [
                                 '%METHOD_NAME%' => $method->getName(),
-                                '%RETURN_TYPE%' => $method->getResponseType(),
+                                '%RETURN_TYPE%' => $method->getReturnType(),
                                 '%METHOD_ARGUMENTS%' => implode(", ", array_map(
                                     function (Argument $argument) {
                                         return sprintf("%s $%s", $argument->getType(), $argument->getName());

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Mapping\Dto;
 
-use HttpClientBinder\Mapping\Enum\HttpMethod;
 use JMS\Serializer\Annotation as Serializer;
 
 final class Endpoint
@@ -42,6 +41,14 @@ final class Endpoint
     private $headerBag;
 
     /**
+     * @var RequestType|null
+     *
+     * @Serializer\Type("HttpClientBinder\Mapping\Dto\RequestType")
+     * @Serializer\SerializedName("requestType")
+     */
+    private $requestType;
+
+    /**
      * @var string
      *
      * @Serializer\Type("string")
@@ -49,28 +56,20 @@ final class Endpoint
      */
     private $responseType;
 
-    /**
-     * @var string|null
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("responseType")
-     */
-    private $requestType;
-
     public function __construct(
         string $name,
         string $method,
         Url $url,
         HttpHeaderBag $headerBag,
-        string $responseType,
-        ?string $requestType //TODO определять откуда брать тело для запроса
+        ?RequestType $requestType,
+        string $responseType
     ) {
         $this->name = $name;
         $this->method = $method;
         $this->url = $url;
         $this->headerBag = $headerBag;
-        $this->responseType = $responseType;
         $this->requestType = $requestType;
+        $this->responseType = $responseType;
     }
 
     public function getName(): string
@@ -93,13 +92,13 @@ final class Endpoint
         return $this->headerBag;
     }
 
+    public function getRequestType(): ?RequestType
+    {
+        return $this->requestType;
+    }
+
     public function getResponseType(): string
     {
         return $this->responseType;
-    }
-
-    public function getRequestType(): ?string
-    {
-        return $this->requestType;
     }
 }

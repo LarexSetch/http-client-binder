@@ -32,7 +32,7 @@ final class ReflectionMethodsProvider implements MethodsProviderInterface
         return
             new Method(
                 $reflectionMethod->getName(),
-                $this->getResponseType($reflectionMethod),
+                $this->getReturnType($reflectionMethod),
                 $this->getArguments($reflectionMethod)
             );
     }
@@ -55,7 +55,7 @@ final class ReflectionMethodsProvider implements MethodsProviderInterface
             );
     }
 
-    private function getResponseType(ReflectionMethod $reflectionMethod): ?string
+    private function getReturnType(ReflectionMethod $reflectionMethod): ?string
     {
         $reflectionType = $reflectionMethod->getReturnType();
 

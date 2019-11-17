@@ -17,19 +17,19 @@ class Method
     private $name;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $responseType;
+    private $returnType;
 
     /**
      * @var Argument[]
      */
     private $arguments;
 
-    public function __construct(string $name, string $responseType, array $arguments)
+    public function __construct(string $name, ?string $returnType, array $arguments)
     {
         $this->name = $name;
-        $this->responseType = $responseType;
+        $this->returnType = $returnType;
         $this->arguments = $arguments;
     }
 
@@ -38,9 +38,9 @@ class Method
         return $this->name;
     }
 
-    public function getResponseType(): string
+    public function getReturnType(): ?string
     {
-        return $this->responseType;
+        return $this->returnType;
     }
 
     /**

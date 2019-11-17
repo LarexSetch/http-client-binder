@@ -17,6 +17,7 @@ use HttpClientBinder\Mapping\Dto\Endpoint;
 use HttpClientBinder\Mapping\Dto\EndpointBag;
 use HttpClientBinder\Mapping\Dto\HttpHeader;
 use HttpClientBinder\Mapping\Dto\HttpHeaderBag;
+use HttpClientBinder\Mapping\Dto\RequestType;
 use HttpClientBinder\Mapping\Dto\Url;
 use HttpClientBinder\Mapping\Dto\UrlParameter;
 use HttpClientBinder\Mapping\Dto\UrlParameterBag;
@@ -24,6 +25,7 @@ use HttpClientBinder\Mapping\Enum\HttpMethod;
 use HttpClientBinder\Mapping\Enum\UrlParameterType;
 use HttpClientBinder\Method\Dto\Method;
 use HttpClientBinder\Method\MethodsProviderInterface;
+use Psr\Http\Message\StreamInterface;
 use ReflectionClass;
 
 final class MapFromAnnotation implements MappingBuilderInterface
@@ -69,8 +71,8 @@ final class MapFromAnnotation implements MappingBuilderInterface
                 $this->getHttpMethod($method),
                 $this->getUrl($method),
                 $this->getHeaderBag($method),
-                $method->getResponseType(),
-                $this->getRequestType($method)
+                $this->getRequestType($method),
+                $this->getResponseType($method)
             );
     }
 
@@ -95,7 +97,7 @@ final class MapFromAnnotation implements MappingBuilderInterface
                 $this->reflectionClass->getMethod($method->getName()),
                 ParameterBag::class
             );
-        if(null === $parameterBag) {
+        if (null === $parameterBag) {
             return new UrlParameterBag([]);
         }
 
@@ -121,7 +123,7 @@ final class MapFromAnnotation implements MappingBuilderInterface
                 $this->reflectionClass->getMethod($method->getName()),
                 HeaderBag::class
             );
-        if(null === $headerBag) {
+        if (null === $headerBag) {
             return new HttpHeaderBag([]);
         }
 
@@ -136,7 +138,7 @@ final class MapFromAnnotation implements MappingBuilderInterface
             );
     }
 
-    private function getRequestType(Method $method): ?string
+    private function getRequestType(Method $method): ?RequestType
     {
         /** @var RequestBody $requestBody */
         $requestBody =
@@ -145,9 +147,13 @@ final class MapFromAnnotation implements MappingBuilderInterface
                 RequestBody::class
             );
 
-        foreach($method->getArguments() as $argument) {
-            if($argument->getName() === $requestBody->getArgumentName()) {
-                return $argument->getType();
+        foreach ($method->getArguments() as $argument) {
+            if ($argument->getName() === $requestBody->getArgumentName()) {
+                return
+                    new RequestType(
+                        $argument->getName(),
+                        $argument->getType()
+                    );
             }
         }
 
@@ -175,10 +181,18 @@ final class MapFromAnnotation implements MappingBuilderInterface
                 \HttpClientBinder\Annotation\Client::class
             );
 
-        if(null === $clientAnnotation) {
+        if (null === $clientAnnotation) {
             throw new DomainException("You must define the Client annotation");
         }
 
         return $clientAnnotation;
+    }
+
+    private function getResponseType(Method $method): string
+    {
+        return
+            null === $method->getReturnType()
+                ? StreamInterface::class
+                : $method->getReturnType();
     }
 }

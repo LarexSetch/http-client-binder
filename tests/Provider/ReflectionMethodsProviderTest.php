@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace Provider;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use HttpClientBinder\Annotation\HeaderBag;
 use HttpClientBinder\Annotation\Header;
 use HttpClientBinder\Annotation\ParameterBag;
 use HttpClientBinder\Annotation\Parameter;
 use HttpClientBinder\Annotation\RequestMapping;
 use HttpClientBinder\Annotation\RequestBody;
-use HttpClientBinder\Provider\Dto\Argument;
-use HttpClientBinder\Provider\Dto\Method;
-use HttpClientBinder\Provider\ReflectionMethodsProvider;
+use HttpClientBinder\Method\Dto\Argument;
+use HttpClientBinder\Method\Dto\Method;
+use HttpClientBinder\Method\ReflectionMethodsProvider;
 use HttpClientBinder\Tests\Base\AbstractAnnotationTestCase;
 use ReflectionClass;
 
@@ -25,7 +24,7 @@ final class ReflectionMethodsProviderTest extends AbstractAnnotationTestCase
      */
     public function provide(string $className, array $expectedResult): void
     {
-        $provider = new ReflectionMethodsProvider(new ReflectionClass($className), new AnnotationReader());
+        $provider = new ReflectionMethodsProvider(new ReflectionClass($className));
         $this->assertEquals($expectedResult, $provider->provide());
     }
 
@@ -36,17 +35,7 @@ final class ReflectionMethodsProviderTest extends AbstractAnnotationTestCase
             [
                 new Method(
                     'first',
-                    new RequestMapping([
-                        'value' => '/some/first',
-                        'method' => 'GET',
-                        'requestType' => 'application/json',
-                        'responseType' => 'application/xml'
-                    ]),
-                    new HeaderBag([]),
-                    new ParameterBag([]),
-                    null,
                     'array',
-                    null,
                     []
                 ),
             ]
@@ -57,17 +46,7 @@ final class ReflectionMethodsProviderTest extends AbstractAnnotationTestCase
             [
                 new Method(
                     'second',
-                    new RequestMapping([
-                        'value' => '/some/second',
-                        'method' => 'GET',
-                    ]),
-                    new HeaderBag([
-                        'value' => [new Header(['value' => 'Content-type: application/json'])]
-                    ]),
-                    new ParameterBag([]),
-                    null,
                     'string',
-                    null,
                     []
                 ),
             ]
@@ -78,17 +57,7 @@ final class ReflectionMethodsProviderTest extends AbstractAnnotationTestCase
             [
                 new Method(
                     'third',
-                    new RequestMapping([
-                        'value' => '/some/third',
-                        'method' => 'GET',
-                    ]),
-                    new HeaderBag([]),
-                    new ParameterBag([
-                        'value' => [new Parameter(['argumentName' => 'id', 'alias' => 'thirdId'])]
-                    ]),
-                    null,
                     'array',
-                    null,
                     [new Argument('id', 'int')]
                 ),
             ]
@@ -99,15 +68,7 @@ final class ReflectionMethodsProviderTest extends AbstractAnnotationTestCase
             [
                 new Method(
                     'fourth',
-                    new RequestMapping([
-                        'value' => '/some/fourth',
-                        'method' => 'POST',
-                    ]),
-                    new HeaderBag([]),
-                    new ParameterBag([]),
-                    new RequestBody(['argumentName' => 'theBody']),
                     SomeResponseBody::class,
-                    SomeRequestBody::class,
                     [new Argument('theBody', SomeRequestBody::class)]
                 ),
             ]

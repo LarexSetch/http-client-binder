@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Protocol;
 
+use HttpClientBinder\Codec\DecoderInterface;
+use HttpClientBinder\Codec\TypeBuilderInterface;
 use HttpClientBinder\Mapping\Dto\Client;
 use HttpClientBinder\Mapping\Dto\Endpoint;
-use HttpClientBinder\Protocol\RemoteCall\RemoteCallFactory;
+use HttpClientBinder\Protocol\RemoteCall\RemoteCallFactoryInterface;
 use HttpClientBinder\Protocol\RequestBuilder\RequestBuilder;
-use HttpClientBinder\Protocol\ResponseAssembler\ResponseAssembler;
+use HttpClientBinder\Protocol\ResponseDecoder\ResponseTypeBuilderFactoryInterface;
 
 final class MagicProtocol
 {
@@ -18,7 +20,7 @@ final class MagicProtocol
     private $client;
 
     /**
-     * @var RemoteCallFactory
+     * @var RemoteCallFactoryInterface
      */
     private $remoteCallFactory;
 
@@ -28,20 +30,27 @@ final class MagicProtocol
     private $requestBuilder;
 
     /**
-     * @var ResponseAssembler
+     * @var DecoderInterface
      */
-    private $responseAssembler;
+    private $decoder;
+
+    /**
+     * @var ResponseTypeBuilderFactoryInterface
+     */
+    private $responseTypeBuilderFactory;
 
     public function __construct(
         Client $client,
-        RemoteCallFactory $remoteCallFactory,
+        RemoteCallFactoryInterface $remoteCallFactory,
         RequestBuilder $requestBuilder,
-        ResponseAssembler $responseAssembler
+        DecoderInterface $decoder,
+        ResponseTypeBuilderFactoryInterface $responseTypeBuilderFactory
     ) {
         $this->client = $client;
         $this->remoteCallFactory = $remoteCallFactory;
         $this->requestBuilder = $requestBuilder;
-        $this->responseAssembler = $responseAssembler;
+        $this->decoder = $decoder;
+        $this->responseTypeBuilderFactory = $responseTypeBuilderFactory;
     }
 
     /**
@@ -53,7 +62,11 @@ final class MagicProtocol
         $remoteCall = $this->remoteCallFactory->build($this->client, $endpoint);
         $response = $remoteCall->invoke($this->requestBuilder->build($endpoint, $arguments));
 
-        return $this->responseAssembler->assemble($response, $endpoint);
+        return
+            $this->decoder->decode(
+                $response->getBody(),
+                $this->responseTypeBuilderFactory->create($response)->build($endpoint)
+            );
     }
 
     /**
@@ -61,8 +74,8 @@ final class MagicProtocol
      */
     private function getEndpoint(string $name): Endpoint
     {
-        foreach($this->client->getEndpointBag()->getEndpoints() as $endpoint){
-            if($endpoint->getName() === $name) {
+        foreach ($this->client->getEndpointBag()->getEndpoints() as $endpoint) {
+            if ($endpoint->getName() === $name) {
                 return $endpoint;
             }
         }

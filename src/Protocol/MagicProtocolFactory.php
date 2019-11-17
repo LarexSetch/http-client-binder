@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace HttpClientBinder\Protocol;
 
 use HttpClientBinder\Mapping\Dto\Client;
-use HttpClientBinder\Protocol\RemoteCall\EndpointCallFactory;
-use HttpClientBinder\Protocol\RequestBuilder\BodyResolver\BodyResolverStrategy;
+use HttpClientBinder\Protocol\RemoteCall\RemoteCallFactory;
+use HttpClientBinder\Protocol\RequestBuilder\BodyEncoder;
+use HttpClientBinder\Protocol\RequestBuilder\BodyResolver;
 use HttpClientBinder\Protocol\RequestBuilder\GuzzleRequestBuilder;
-use HttpClientBinder\Protocol\RequestBuilder\UrlResolver\UrlResolverStrategy;
-use HttpClientBinder\Protocol\ResponseAssembler\Deserialize;
+use HttpClientBinder\Protocol\RequestBuilder\RequestTypeBuilder;
+use HttpClientBinder\Protocol\RequestBuilder\StreamBuilder;
+use HttpClientBinder\Protocol\RequestBuilder\UrlBuilder;
+use HttpClientBinder\Protocol\ResponseDecoder\ResponseDecoder;
+use HttpClientBinder\Protocol\ResponseDecoder\ResponseTypeBuilderFactory;
 use JMS\Serializer\SerializerInterface;
 
 final class MagicProtocolFactory implements MagicProtocolFactoryInterface
@@ -29,12 +33,23 @@ final class MagicProtocolFactory implements MagicProtocolFactoryInterface
         return
             new MagicProtocol(
                 $this->deserializeMappings($jsonMappings),
-                new EndpointCallFactory(),
+                new RemoteCallFactory(),
                 new GuzzleRequestBuilder(
-                    new UrlResolverStrategy(),
-                    new BodyResolverStrategy($this->serializer)
+                    new UrlBuilder(),
+                    new BodyResolver(
+                        $this->serializer,
+                        new StreamBuilder(),
+                        new BodyEncoder(
+                            $this->serializer,
+                            new StreamBuilder()
+                        ),
+                        new RequestTypeBuilder()
+                    )
                 ),
-                new Deserialize()
+                new ResponseDecoder(
+                    $this->serializer
+                ),
+                new ResponseTypeBuilderFactory()
             );
     }
 

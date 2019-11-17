@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Protocol\RequestBuilder\UrlResolver;
+namespace HttpClientBinder\Protocol\RequestBuilder;
 
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use HttpClientBinder\Mapping\Dto\UrlParameter;
 use HttpClientBinder\Mapping\Enum\UrlParameterType;
 
-final class UrlResolverStrategy implements UrlResolver
+final class UrlBuilder implements UrlBuilderInterface
 {
-    public function resolve(Endpoint $endpoint, array $arguments): string
+    public function build(Endpoint $endpoint, array $arguments): string
     {
         return
             strtr($endpoint->getUrl()->getValue(), $this->getReplaceParameters($endpoint, $arguments)) .

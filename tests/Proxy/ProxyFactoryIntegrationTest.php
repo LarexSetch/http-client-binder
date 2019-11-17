@@ -38,7 +38,7 @@ final class ProxyFactoryIntegrationTest extends AbstractAnnotationTestCase
                 new MapFromAnnotationFactory(),
                 SerializerBuilder::create()->build(),
                 new ProxySourceRender(),
-                new ProxySourceStorage(dirname(__FILE__)),
+                new ProxySourceStorage(TMP_DIR),
                 new ReflectionMethodsProviderFactory()
             );
     }
