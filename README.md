@@ -1,7 +1,36 @@
 # Http client binder
-Request
 
-Enter container with bash
+This library creates simple way bind the interface and http call to foreign endpoint
+
+## Example
+
+```php
+<?php
+
+use HttpClientBinder\Annotation\Client;
+use HttpClientBinder\Annotation\RequestMapping;
+
+/**
+ * @Client(baseUrl="http://test.com")
+ */
+interface SomeRemoteApiInterface {
+    /**
+     * @RequestMapping("/", method="GET", responseType="application/json")
+     */
+    public function getItem(int $id): SpecificData;
+}
+
+/**
+ * Object to deserialize
+ */
+class SpecificData {}
+```
+
+You must build the client
+
+```php
+
+```
 
 ```
 docker build -f etc/docker/php/Dockerfile localphp

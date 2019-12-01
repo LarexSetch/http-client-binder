@@ -1,6 +1,7 @@
 version: '3'
 services:
     php:
+        container_name: http-client-binder
         build: ./etc/docker/php/
         volumes:
-            - .:/usr/share/proj
+            - ./:/usr/share/proj
