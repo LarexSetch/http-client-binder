@@ -147,6 +147,10 @@ final class MapFromAnnotation implements MappingBuilderInterface
                 RequestBody::class
             );
 
+        if (null === $requestBody) {
+            return null;
+        }
+
         foreach ($method->getArguments() as $argument) {
             if ($argument->getName() === $requestBody->getArgumentName()) {
                 return

@@ -38,6 +38,7 @@ final class RequestMapping
 
     public function __construct(array $values)
     {
+        //TODO Validate all required properties
         $this->uri = $values['value'];
         $this->method = $values['method'];
         $this->requestType = $values["requestType"];

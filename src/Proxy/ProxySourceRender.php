@@ -31,7 +31,7 @@ final class ProxySourceRender implements SourceRenderInterface
 
 declare(strict_types=1);
 
-use HttpClientBinder\Protocol\MagicProtocolFactory;
+use HttpClientBinder\Protocol\MagicProtocolFactoryInterface;
 use JMS\Serializer\SerializerInterface;
 
 class %CLASS_NAME% implements %INTERFACE_NAMESPACE%
@@ -41,8 +41,8 @@ class %CLASS_NAME% implements %INTERFACE_NAMESPACE%
      */
     private \$protocol;
 
-    public function __construct(SerializerInterface \$serializer) {
-        \$this->protocol = (new MagicProtocolFactory(\$serializer))->build('%JSON_MAPPINGS%');
+    public function __construct(MagicProtocolFactoryInterface \$magicProtocolFactory) {
+        \$this->protocol = \$magicProtocolFactory->build('%JSON_MAPPINGS%');
     }
 
 %METHODS_IMPLEMENTATION%

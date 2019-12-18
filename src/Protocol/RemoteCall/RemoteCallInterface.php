@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Protocol\RemoteCall;
 
-use Psr\Http\Message\RequestInterface;
+use HttpClientBinder\Mapping\Dto\Endpoint;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 interface RemoteCallInterface
 {
-    public function invoke(RequestInterface $request): ResponseInterface;
+    /**
+     * @return mixed|ResponseInterface|StreamInterface
+     */
+    public function invoke(Endpoint $endpoint, array $arguments);
 }

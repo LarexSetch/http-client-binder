@@ -7,7 +7,7 @@ namespace HttpClientBinder\Proxy;
 interface ProxyFactoryInterface
 {
     /**
-     * @return mixed implementation of some $class
+     * @return mixed implementation of some $interfaceName
      */
     public function build(string $interfaceName);
 }

@@ -6,9 +6,5 @@ namespace HttpClientBinder\Protocol;
 
 interface MagicProtocolFactoryInterface
 {
-    /**
-     * @param string $jsonMappings
-     * @return MagicProtocol
-     */
     public function build(string $jsonMappings): MagicProtocol;
 }

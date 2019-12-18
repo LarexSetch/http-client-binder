@@ -12,10 +12,6 @@ use Psr\Http\Message\StreamInterface;
 
 final class BodyResolver implements BodyResolverInterface
 {
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
 
     /**
      * @var StreamBuilderInterface
@@ -33,12 +29,10 @@ final class BodyResolver implements BodyResolverInterface
     private $typeBuilder;
 
     public function __construct(
-        SerializerInterface $serializer,
         StreamBuilderInterface $streamBuilder,
         EncoderInterface $encoder,
         TypeBuilderInterface $typeBuilderFactory
     ) {
-        $this->serializer = $serializer;
         $this->streamBuilder = $streamBuilder;
         $this->encoder = $encoder;
         $this->typeBuilder = $typeBuilderFactory;

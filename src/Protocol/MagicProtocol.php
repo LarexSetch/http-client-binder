@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace HttpClientBinder\Protocol;
 
 use HttpClientBinder\Codec\DecoderInterface;
-use HttpClientBinder\Codec\TypeBuilderInterface;
 use HttpClientBinder\Mapping\Dto\Client;
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use HttpClientBinder\Protocol\RemoteCall\RemoteCallFactoryInterface;
-use HttpClientBinder\Protocol\RequestBuilder\RequestBuilder;
 use HttpClientBinder\Protocol\ResponseDecoder\ResponseTypeBuilderFactoryInterface;
 
-final class MagicProtocol
+final class MagicProtocol implements MagicProtocolInterface
 {
     /**
      * @var Client
@@ -24,33 +22,12 @@ final class MagicProtocol
      */
     private $remoteCallFactory;
 
-    /**
-     * @var RequestBuilder
-     */
-    private $requestBuilder;
-
-    /**
-     * @var DecoderInterface
-     */
-    private $decoder;
-
-    /**
-     * @var ResponseTypeBuilderFactoryInterface
-     */
-    private $responseTypeBuilderFactory;
-
     public function __construct(
         Client $client,
-        RemoteCallFactoryInterface $remoteCallFactory,
-        RequestBuilder $requestBuilder,
-        DecoderInterface $decoder,
-        ResponseTypeBuilderFactoryInterface $responseTypeBuilderFactory
+        RemoteCallFactoryInterface $remoteCallFactory
     ) {
         $this->client = $client;
         $this->remoteCallFactory = $remoteCallFactory;
-        $this->requestBuilder = $requestBuilder;
-        $this->decoder = $decoder;
-        $this->responseTypeBuilderFactory = $responseTypeBuilderFactory;
     }
 
     /**
@@ -60,13 +37,8 @@ final class MagicProtocol
     {
         $endpoint = $this->getEndpoint($name);
         $remoteCall = $this->remoteCallFactory->build($this->client, $endpoint);
-        $response = $remoteCall->invoke($this->requestBuilder->build($endpoint, $arguments));
 
-        return
-            $this->decoder->decode(
-                $response->getBody(),
-                $this->responseTypeBuilderFactory->create($response)->build($endpoint)
-            );
+        return $remoteCall->invoke($endpoint, $arguments);
     }
 
     /**

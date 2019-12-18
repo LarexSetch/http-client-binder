@@ -7,7 +7,7 @@ namespace HttpClientBinder\Protocol\RequestBuilder;
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use Psr\Http\Message\RequestInterface;
 
-interface RequestBuilder
+interface RequestBuilderInterface
 {
     public function build(Endpoint $endpoint, array $arguments): RequestInterface;
 }

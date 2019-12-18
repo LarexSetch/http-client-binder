@@ -8,7 +8,7 @@ use GuzzleHttp\Psr7\Request;
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use Psr\Http\Message\RequestInterface;
 
-final class GuzzleRequestBuilder implements RequestBuilder
+final class GuzzleRequestBuilder implements RequestBuilderInterface
 {
     /**
      * @var UrlBuilderInterface

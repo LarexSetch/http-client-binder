@@ -31,6 +31,11 @@ final class ResponseTypeBuilder implements TypeBuilderInterface
             );
     }
 
+    public static function create(ResponseInterface $response): TypeBuilderInterface
+    {
+        return new ResponseTypeBuilder($response);
+    }
+
     /**
      * @throws UnexpectedFormatException
      */

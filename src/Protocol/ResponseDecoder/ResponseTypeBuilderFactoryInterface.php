@@ -9,5 +9,5 @@ use Psr\Http\Message\ResponseInterface;
 
 interface ResponseTypeBuilderFactoryInterface
 {
-    public function create(ResponseInterface $response): TypeBuilderInterface;
+    public static function create(ResponseInterface $response): TypeBuilderInterface;
 }
