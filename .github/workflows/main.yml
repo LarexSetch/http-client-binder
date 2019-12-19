@@ -9,9 +9,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Run a one-line script
+    - name: Install dependencies
       run: composer install
-    - name: Run a multi-line script
+    - name: Run tests
       run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
+        vendor/bin/phpunit
