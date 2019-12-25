@@ -20,7 +20,7 @@ final class HeaderBagTest extends AbstractAnnotationTestCase
         $annotations = $this->readAnnotation();
 
         $this->assertEquals([
-            new HeaderBag(['value' => [new Header(['value' => 'Content-type: application/json'])]])
+            new HeaderBag(['value' => [new Header(['value' => 'Content-type', 'values' => 'application/json'])]])
         ], $annotations);
     }
 
@@ -36,7 +36,7 @@ final class HeaderBagTest extends AbstractAnnotationTestCase
 
 /**
  * @HeaderBag({
- *  @Header("Content-type: application/json")
+ *  @Header("Content-type", values={"application/json"})
  * })
  */
 interface ClientWithHeader

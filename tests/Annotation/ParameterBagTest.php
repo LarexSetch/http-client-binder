@@ -22,7 +22,7 @@ final class ParameterBagTest extends AbstractAnnotationTestCase
         $annotations = $this->readAnnotation();
 
         $this->assertEquals([
-            new ParameterBag(['value' => [new Parameter(['propertyName' => 'id', 'alias' => 'dataId'])]])
+            new ParameterBag(['value' => [new Parameter(['argument' => 'id', 'alias' => 'dataId', 'type' => Parameter::TYPE_BODY])]])
         ], $annotations);
     }
 
@@ -41,7 +41,7 @@ interface ClientWithGetParameters
 {
     /**
      * @ParameterBag({
-     *     @Parameter("id", alias = "dataId")
+     *     @Parameter("id", alias = "dataId", type=Parameter::TYPE_BODY)
      * })
      */
     public function getData(int $id);

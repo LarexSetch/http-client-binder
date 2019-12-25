@@ -7,6 +7,7 @@ namespace HttpClientBinder\Annotation;
 use Doctrine\Common\Annotations\Annotation;
 use Doctrine\Common\Annotations\Annotation\Target;
 use Doctrine\Common\Annotations\Annotation\Required;
+use InvalidArgumentException;
 
 /**
  * @Annotation
@@ -22,7 +23,13 @@ final class Client
 
     public function __construct(array $value)
     {
-        $this->baseUrl = $value['baseUrl'];
+        if(isset($value['value'])) {
+            $this->baseUrl = $value['value'];
+        } elseif(isset($value['baseUrl'])) {
+            $this->baseUrl = $value['baseUrl'];
+        } else {
+            throw new InvalidArgumentException('You must set @Client("http://example.com") or @Client(baseUrl="http://example.com")');
+        }
     }
 
     public function getBaseUrl(): string
