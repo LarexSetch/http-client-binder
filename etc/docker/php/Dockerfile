@@ -15,6 +15,8 @@ RUN wget https://get.symfony.com/cli/installer -O - | bash && \
 
 RUN apt-get install -y git
 
+RUN cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
+
 #RUN symfony
 #RUN composer
 

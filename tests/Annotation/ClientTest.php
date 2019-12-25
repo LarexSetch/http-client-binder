@@ -13,13 +13,14 @@ final class ClientTest extends AbstractAnnotationTestCase
     /**
      * @test
      */
-    public function createClient(): void
+    public function createFromInterface(): void
     {
         $annotations = $this->readAnnotation();
-
-        $this->assertEquals([
+        $expectedAnnotations = [
             new Client(['value' => 'http://test.com'])
-        ], $annotations);
+        ];
+
+        $this->assertEquals($expectedAnnotations, $annotations);
     }
 
     private function readAnnotation(): array
