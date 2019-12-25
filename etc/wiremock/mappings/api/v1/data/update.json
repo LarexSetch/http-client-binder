@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "PUT",
+    "url": "/api/v1/data/10030",
+    "headers": {
+      "Content-Type": {
+        "equalTo": "application/json"
+      }
+    },
+    "bodyPattern": [{
+      "equalToJson": {
+        "propertyOne": "Some value of one property",
+        "propertyTwo": "The two value"
+      }
+    }]
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "api/v1/data/updateResponse.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

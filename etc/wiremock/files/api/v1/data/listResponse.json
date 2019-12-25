@@ -1,3 +1,11 @@
 {
-  "one": "two"
+  "elements": [
+    {
+      "id": 1,
+      "propertyOne": "one",
+      "propertyTwo": "two"
+    }
+  ],
+  "elementsCount": 200,
+  "elementsOnPage": 1
 }
