@@ -7,6 +7,7 @@ namespace HttpClientBinder\Annotation;
 use Doctrine\Common\Annotations\Annotation;
 use Doctrine\Common\Annotations\Annotation\Required;
 use Doctrine\Common\Annotations\Annotation\Target;
+use InvalidArgumentException;
 
 /**
  * @Annotation
@@ -22,7 +23,17 @@ final class RequestBody
 
     public function __construct(array $values)
     {
-        $this->argumentName = $values['argumentName'];
+        if (isset($values['value'])) {
+            $this->argumentName = $values['value'];
+        } elseif (isset($values['argumentName'])) {
+            $this->argumentName = $values['argumentName'];
+        } else {
+            throw new InvalidArgumentException(
+                'You must define request body as ' .
+                '@RequestBody("arg1") or ' .
+                '@RequestBody(argumentName="arg1")'
+            );
+        }
     }
 
     public function getArgumentName(): string

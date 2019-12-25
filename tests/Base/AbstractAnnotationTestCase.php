@@ -10,6 +10,7 @@ use HttpClientBinder\Annotation\Header;
 use HttpClientBinder\Annotation\HeaderBag;
 use HttpClientBinder\Annotation\Parameter;
 use HttpClientBinder\Annotation\ParameterBag;
+use HttpClientBinder\Annotation\RequestBody;
 use HttpClientBinder\Annotation\RequestMapping;
 use JMS\Serializer\Annotation\SerializedName;
 use JMS\Serializer\Annotation\Type;
@@ -28,6 +29,7 @@ abstract class AbstractAnnotationTestCase extends TestCase
         $this->registerAnnotation(RequestMapping::class);
         $this->registerAnnotation(Type::class);
         $this->registerAnnotation(SerializedName::class);
+        $this->registerAnnotation(RequestBody::class);
     }
 
     /**

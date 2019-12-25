@@ -17,7 +17,9 @@ use phpDocumentor\Reflection\Types\Self_;
 final class Parameter
 {
     public const TYPE_QUERY = 'query';
+    public const TYPE_PATH = 'path';
     public const TYPE_BODY = 'body';
+    public const TYPE_HEADER = 'header';
 
     /**
      * @var string
@@ -106,6 +108,6 @@ final class Parameter
 
     private static function getTypes(): array
     {
-        return [self::TYPE_QUERY, self::TYPE_BODY];
+        return [self::TYPE_QUERY, self::TYPE_PATH, self::TYPE_BODY, self::TYPE_HEADER];
     }
 }

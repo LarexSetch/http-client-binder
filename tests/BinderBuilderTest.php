@@ -17,6 +17,7 @@ final class BinderBuilderTest extends AbstractAnnotationTestCase
      */
     public function build(): void
     {
+        $this->markTestSkipped("Do refactoring and remove MethodsProvider");
         /** @var SomeMyClient $client */
         $client =
             BinderBuilder::builder()

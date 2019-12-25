@@ -6,7 +6,7 @@ namespace HttpClientBinder\Mapping\Dto;
 
 use JMS\Serializer\Annotation as Serializer;
 
-final class Client
+final class MappingClient
 {
     /**
      * @var string

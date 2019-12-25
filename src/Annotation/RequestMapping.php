@@ -23,17 +23,17 @@ final class RequestMapping
 
     /**
      * @var string
-     * @Required
+     * @Required()
      */
     private $method;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $requestType;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $responseType;
 
@@ -70,12 +70,12 @@ final class RequestMapping
         return $this->method;
     }
 
-    public function getRequestType(): string
+    public function getRequestType(): ?string
     {
         return $this->requestType;
     }
 
-    public function getResponseType(): string
+    public function getResponseType(): ?string
     {
         return $this->responseType;
     }

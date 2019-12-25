@@ -4,60 +4,61 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Mapping\Dto;
 
-use HttpClientBinder\Mapping\Enum\UrlParameterType;
 use JMS\Serializer\Annotation as Serializer;
 
 final class UrlParameter
 {
+    public const TYPE_QUERY = 'query';
+    public const TYPE_PATH = 'path';
+
     /**
      * @var string
      *
      * @Serializer\Type("string")
      * @Serializer\SerializedName("name")
      */
-    private $name;
+    private $argument;
 
     /**
      * @var string
+     *
+     * @Serializer\Type("string")
+     * @Serializer\SerializedName("type")
+     */
+    private $type;
+
+    /**
+     * @var string|null
      *
      * @Serializer\Type("string")
      * @Serializer\SerializedName("alias")
      */
     private $alias;
 
-    /**
-     * @var UrlParameterType
-     *
-     * @Serializer\Type("HttpClientBinder\Mapping\Enum\UrlParameterType")
-     * @Serializer\SerializedName("type")
-     */
-    private $type;
-
-    /**
-     * UrlParameter constructor.
-     * @param string $name
-     * @param string $alias
-     * @param UrlParameterType $type
-     */
-    public function __construct(string $name, string $alias, UrlParameterType $type)
+    public function __construct(string $argument, string $type, ?string $alias = null)
     {
-        $this->name = $name;
-        $this->alias = $alias;
+        $this->argument = $argument;
         $this->type = $type;
+        $this->alias = $alias;
     }
 
-    public function getName(): string
+    public function getArgument(): string
     {
-        return $this->name;
+        return $this->argument;
     }
 
-    public function getAlias(): string
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function getAlias(): ?string
     {
         return $this->alias;
     }
 
-    public function getType(): UrlParameterType
+    public static function getTypes(): array
     {
-        return $this->type;
+        return [self::TYPE_PATH, self::TYPE_QUERY];
     }
 }

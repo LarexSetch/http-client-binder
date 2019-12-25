@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace HttpClientBinder\Protocol;
 
 use HttpClientBinder\Codec\DecoderInterface;
-use HttpClientBinder\Mapping\Dto\Client;
+use HttpClientBinder\Mapping\Dto\MappingClient;
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use HttpClientBinder\Protocol\RemoteCall\RemoteCallFactoryInterface;
 use HttpClientBinder\Protocol\ResponseDecoder\ResponseTypeBuilderFactoryInterface;
@@ -13,7 +13,7 @@ use HttpClientBinder\Protocol\ResponseDecoder\ResponseTypeBuilderFactoryInterfac
 final class MagicProtocol implements MagicProtocolInterface
 {
     /**
-     * @var Client
+     * @var MappingClient
      */
     private $client;
 
@@ -23,7 +23,7 @@ final class MagicProtocol implements MagicProtocolInterface
     private $remoteCallFactory;
 
     public function __construct(
-        Client $client,
+        MappingClient $client,
         RemoteCallFactoryInterface $remoteCallFactory
     ) {
         $this->client = $client;

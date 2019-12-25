@@ -59,10 +59,10 @@ final class Endpoint
     public function __construct(
         string $name,
         string $method,
+        string $responseType,
         Url $url,
         HttpHeaderBag $headerBag,
-        ?RequestType $requestType,
-        string $responseType
+        ?RequestType $requestType
     ) {
         $this->name = $name;
         $this->method = $method;

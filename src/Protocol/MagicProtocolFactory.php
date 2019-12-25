@@ -6,7 +6,7 @@ namespace HttpClientBinder\Protocol;
 
 use HttpClientBinder\Codec\DecoderInterface;
 use HttpClientBinder\Codec\EncoderInterface;
-use HttpClientBinder\Mapping\Dto\Client;
+use HttpClientBinder\Mapping\Dto\MappingClient;
 use HttpClientBinder\Protocol\RemoteCall\RemoteCallFactory;
 use JMS\Serializer\SerializerInterface;
 
@@ -50,8 +50,8 @@ final class MagicProtocolFactory implements MagicProtocolFactoryInterface
             );
     }
 
-    private function deserializeMappings(string $mappings): Client
+    private function deserializeMappings(string $mappings): MappingClient
     {
-        return $this->serializer->deserialize($mappings, Client::class, 'json');
+        return $this->serializer->deserialize($mappings, MappingClient::class, 'json');
     }
 }

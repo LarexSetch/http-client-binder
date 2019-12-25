@@ -8,7 +8,7 @@ use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface;
 use HttpClientBinder\Codec\DecoderInterface;
 use HttpClientBinder\Codec\EncoderInterface;
-use HttpClientBinder\Mapping\Dto\Client;
+use HttpClientBinder\Mapping\Dto\MappingClient;
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use HttpClientBinder\Protocol\RequestBuilder\BodyEncoder;
 use HttpClientBinder\Protocol\RequestBuilder\BodyResolver;
@@ -46,7 +46,7 @@ final class RemoteCallFactory implements RemoteCallFactoryInterface
         $this->decoder = $decoder;
     }
 
-    public function build(Client $client, Endpoint $endpoint): RemoteCallInterface
+    public function build(MappingClient $client, Endpoint $endpoint): RemoteCallInterface
     {
         return
             new RemoteCall(
@@ -63,7 +63,7 @@ final class RemoteCallFactory implements RemoteCallFactoryInterface
             );
     }
 
-    private function createGuzzleClient(Client $client, Endpoint $endpoint): ClientInterface
+    private function createGuzzleClient(MappingClient $client, Endpoint $endpoint): ClientInterface
     {
         return
             new GuzzleClient(

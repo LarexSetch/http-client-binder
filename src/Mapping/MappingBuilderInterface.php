@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Mapping;
 
-use HttpClientBinder\Mapping\Dto\Client;
+use HttpClientBinder\Mapping\Dto\MappingClient;
 
 interface MappingBuilderInterface
 {
-    public function build(): Client;
+    public function build(): MappingClient;
 }
