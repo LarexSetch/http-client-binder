@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Method\Dto;
+namespace HttpClientBinder\Proxy\Dto;
 
-class Argument
+final class MethodArgument
 {
     /**
      * @var string
@@ -16,11 +16,6 @@ class Argument
      */
     private $type;
 
-    /**
-     * Argument constructor.
-     * @param string $name
-     * @param string $type
-     */
     public function __construct(string $name, string $type)
     {
         $this->name = $name;

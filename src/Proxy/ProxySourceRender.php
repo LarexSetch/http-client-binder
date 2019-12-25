@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Proxy;
 
-use HttpClientBinder\Method\Dto\Argument;
-use HttpClientBinder\Method\Dto\Method;
+use HttpClientBinder\Proxy\Dto\Method;
+use HttpClientBinder\Proxy\Dto\MethodArgument;
 use HttpClientBinder\Proxy\Dto\RenderData;
 
 final class ProxySourceRender implements SourceRenderInterface
@@ -62,13 +62,13 @@ END;
                                 '%METHOD_NAME%' => $method->getName(),
                                 '%RETURN_TYPE%' => $method->getReturnType(),
                                 '%METHOD_ARGUMENTS%' => implode(", ", array_map(
-                                    function (Argument $argument) {
+                                    function (MethodArgument $argument) {
                                         return sprintf("%s $%s", $argument->getType(), $argument->getName());
                                     },
                                     $method->getArguments()
                                 )),
                                 '%PROTOCOL_ARGUMENTS%' => implode(", ", array_map(
-                                    function (Argument $argument) {
+                                    function (MethodArgument $argument) {
                                         return sprintf("$%s", $argument->getName());
                                     },
                                     $method->getArguments()

@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Proxy;
 
-use HttpClientBinder\Method\MethodsProviderFactoryInterface;
-use HttpClientBinder\Protocol\MagicProtocol;
-use HttpClientBinder\Proxy\Dto\RenderData;
-use JMS\Serializer\SerializerInterface;
-
 final class ProxyFactoryRenderDecorator implements ProxyFactoryInterface
 {
     /**
@@ -30,16 +25,6 @@ final class ProxyFactoryRenderDecorator implements ProxyFactoryInterface
      * @var SourceStorageInterface
      */
     private $sourceStorage;
-
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    /**
-     * @var MethodsProviderFactoryInterface
-     */
-    private $methodsProviderFactory;
 
     /**
      * @var RenderDataFactoryInterface

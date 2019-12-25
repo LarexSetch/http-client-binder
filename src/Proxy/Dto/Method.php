@@ -2,14 +2,9 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Method\Dto;
+namespace HttpClientBinder\Proxy\Dto;
 
-use HttpClientBinder\Annotation\HeaderBag;
-use HttpClientBinder\Annotation\ParameterBag;
-use HttpClientBinder\Annotation\RequestBody;
-use HttpClientBinder\Annotation\RequestMapping;
-
-class Method
+final class Method
 {
     /**
      * @var string
@@ -17,16 +12,16 @@ class Method
     private $name;
 
     /**
-     * @var string|null
+     * @var string
      */
     private $returnType;
 
     /**
-     * @var Argument[]
+     * @var MethodArgument[]
      */
     private $arguments;
 
-    public function __construct(string $name, ?string $returnType, array $arguments)
+    public function __construct(string $name, string $returnType, array $arguments)
     {
         $this->name = $name;
         $this->returnType = $returnType;
@@ -38,14 +33,11 @@ class Method
         return $this->name;
     }
 
-    public function getReturnType(): ?string
+    public function getReturnType(): string
     {
         return $this->returnType;
     }
 
-    /**
-     * @return Argument[]
-     */
     public function getArguments(): array
     {
         return $this->arguments;

@@ -7,26 +7,14 @@ namespace HttpClientBinder\Mapping;
 use Doctrine\Common\Annotations\Reader;
 use DomainException;
 use HttpClientBinder\Annotation\Client;
-use HttpClientBinder\Annotation\Header;
-use HttpClientBinder\Annotation\HeaderBag;
-use HttpClientBinder\Annotation\Parameter;
-use HttpClientBinder\Annotation\ParameterBag;
-use HttpClientBinder\Annotation\RequestBody;
 use HttpClientBinder\Annotation\RequestMapping;
 use HttpClientBinder\Mapping\Dto\MappingClient;
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use HttpClientBinder\Mapping\Dto\EndpointBag;
-use HttpClientBinder\Mapping\Dto\HttpHeader;
-use HttpClientBinder\Mapping\Dto\HttpHeaderBag;
-use HttpClientBinder\Mapping\Dto\RequestType;
 use HttpClientBinder\Mapping\Dto\Url;
-use HttpClientBinder\Mapping\Dto\UrlParameter;
-use HttpClientBinder\Mapping\Dto\UrlParameterBag;
 use HttpClientBinder\Mapping\Extractor\HeadersExtractorInterface;
 use HttpClientBinder\Mapping\Extractor\RequestTypeExtractorInterface;
 use HttpClientBinder\Mapping\Extractor\UrlParametersExtractorInterface;
-use HttpClientBinder\Method\Dto\Method;
-use Psr\Http\Message\StreamInterface;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -73,10 +61,21 @@ final class MapFromAnnotation implements MappingBuilderInterface
 
     public function build(): MappingClient
     {
-        $endpoints = array_map([$this, 'createEndpoint'], $this->reflectionClass->getMethods());
         $client = $this->getClientAnnotation();
+        $endpoints = array_map([$this, 'createEndpoint'], $this->reflectionClass->getMethods());
 
         return new MappingClient($client->getBaseUrl(), new EndpointBag($endpoints));
+    }
+
+    private function getClientAnnotation(): Client
+    {
+        /** @var Client $clientAnnotation */
+        $clientAnnotation = $this->annotationReader->getClassAnnotation($this->reflectionClass, Client::class);
+        if (null === $clientAnnotation) {
+            throw new DomainException("You must define the Client annotation");
+        }
+
+        return $clientAnnotation;
     }
 
     private function createEndpoint(ReflectionMethod $method): Endpoint
@@ -107,17 +106,6 @@ final class MapFromAnnotation implements MappingBuilderInterface
         $requestMapping = $this->annotationReader->getMethodAnnotation($method, RequestMapping::class);
 
         return $requestMapping;
-    }
-
-    private function getClientAnnotation(): Client
-    {
-        /** @var Client $clientAnnotation */
-        $clientAnnotation = $this->annotationReader->getClassAnnotation($this->reflectionClass, Client::class);
-        if (null === $clientAnnotation) {
-            throw new DomainException("You must define the Client annotation");
-        }
-
-        return $clientAnnotation;
     }
 
     private function getResponseType(ReflectionMethod $method): string

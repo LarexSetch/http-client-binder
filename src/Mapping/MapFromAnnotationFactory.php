@@ -7,8 +7,7 @@ namespace HttpClientBinder\Mapping;
 use Doctrine\Common\Annotations\AnnotationReader;
 use HttpClientBinder\Mapping\Extractor\HeadersExtractor;
 use HttpClientBinder\Mapping\Extractor\RequestTypeExtractor;
-use HttpClientBinder\Mapping\UrlParameterBag\UrlParametersExtractor;
-use HttpClientBinder\Method\ReflectionMethodsProvider;
+use HttpClientBinder\Mapping\Extractor\UrlParametersExtractor;
 use ReflectionClass;
 
 final class MapFromAnnotationFactory implements MappingBuilderFactoryInterface

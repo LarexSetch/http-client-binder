@@ -7,7 +7,6 @@ namespace HttpClientBinder;
 use HttpClientBinder\Codec\DecoderInterface;
 use HttpClientBinder\Codec\EncoderInterface;
 use HttpClientBinder\Mapping\MapFromAnnotationFactory;
-use HttpClientBinder\Method\ReflectionMethodsProviderFactory;
 use HttpClientBinder\Protocol\MagicProtocolFactory;
 use HttpClientBinder\Protocol\MagicProtocolFactoryInterface;
 use HttpClientBinder\Protocol\RequestBuilder\BodyEncoder;
@@ -101,8 +100,7 @@ final class BinderBuilder implements BinderBuilderInterface
                 new RenderDataFactory(
                     $this->classNameResolver,
                     new MapFromAnnotationFactory(),
-                    $this->serializer,
-                    new ReflectionMethodsProviderFactory()
+                    $this->serializer
                 ),
                 new ProxyFactory(
                     $this->classNameResolver,
