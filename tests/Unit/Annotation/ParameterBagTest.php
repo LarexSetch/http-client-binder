@@ -2,11 +2,9 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Tests\Annotation;
+namespace HttpClientBinder\Tests\Unit\Annotation;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use HttpClientBinder\Annotation\Header;
-use HttpClientBinder\Annotation\HeaderBag;
 use HttpClientBinder\Annotation\Parameter;
 use HttpClientBinder\Annotation\ParameterBag;
 use HttpClientBinder\Tests\Base\AbstractAnnotationTestCase;
@@ -26,6 +24,9 @@ final class ParameterBagTest extends AbstractAnnotationTestCase
         ], $annotations);
     }
 
+    /**
+     * @throws mixed
+     */
     private function readAnnotation(): array
     {
         $reflectionClass = new ReflectionClass(ClientWithGetParameters::class);

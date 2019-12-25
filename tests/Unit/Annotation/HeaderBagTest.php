@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Tests\Annotation;
+namespace HttpClientBinder\Tests\Unit\Annotation;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use HttpClientBinder\Annotation\Header;
@@ -24,6 +24,9 @@ final class HeaderBagTest extends AbstractAnnotationTestCase
         ], $annotations);
     }
 
+    /**
+     * @throws mixed
+     */
     private function readAnnotation(): array
     {
         $reflectionClass = new ReflectionClass(ClientWithHeader::class);

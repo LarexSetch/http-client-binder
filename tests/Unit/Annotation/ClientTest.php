@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Tests\Annotation;
+namespace HttpClientBinder\Tests\Unit\Annotation;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use HttpClientBinder\Annotation\Client;
 use HttpClientBinder\Tests\Base\AbstractAnnotationTestCase;
+use ReflectionClass;
 
 final class ClientTest extends AbstractAnnotationTestCase
 {
@@ -23,9 +24,12 @@ final class ClientTest extends AbstractAnnotationTestCase
         $this->assertEquals($expectedAnnotations, $annotations);
     }
 
+    /**
+     * @throws mixed
+     */
     private function readAnnotation(): array
     {
-        $reflectionClass = new \ReflectionClass(ClientInterface::class);
+        $reflectionClass = new ReflectionClass(ClientInterface::class);
 
         $reader = new AnnotationReader();
         return $reader->getClassAnnotations($reflectionClass);

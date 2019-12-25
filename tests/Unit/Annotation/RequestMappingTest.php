@@ -28,6 +28,9 @@ final class RequestMappingTest extends AbstractAnnotationTestCase
         ], $annotations);
     }
 
+    /**
+     * @throws mixed
+     */
     private function readAnnotation(): array
     {
         $reflectionClass = new ReflectionClass(ClientWithRequestLine::class);

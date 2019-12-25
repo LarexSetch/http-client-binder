@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/data"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "api/v1/data/listResponse.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Tests;
+namespace HttpClientBinder\Tests\Unit;
 
 use HttpClientBinder\Annotation\Client;
 use HttpClientBinder\Annotation\RequestMapping;

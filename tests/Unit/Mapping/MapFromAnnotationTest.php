@@ -1,6 +1,8 @@
 <?php
 
-namespace HttpClientBinder\Tests\Mapping;
+declare(strict_types=1);
+
+namespace HttpClientBinder\Tests\Unit\Mapping;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use HttpClientBinder\Annotation\Client;
@@ -41,6 +43,9 @@ final class MapFromAnnotationTest extends AbstractAnnotationTestCase
         $this->assertEquals($this->createExpectedMapping(), $clientMapping);
     }
 
+    /**
+     * @throws mixed
+     */
     private function createBuilder(): MappingBuilderInterface
     {
         $reader = new AnnotationReader();
