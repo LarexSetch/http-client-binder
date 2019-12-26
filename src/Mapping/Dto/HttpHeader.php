@@ -24,10 +24,19 @@ final class HttpHeader
      */
     private $value;
 
-    public function __construct(string $name, array $value)
+    /**
+     * @var HttpHeaderParameter[]
+     *
+     * @Serializer\Type("array<HttpClientBinder\Mapping\Dto\HttpHeaderParameter>")
+     * @Serializer\SerializedName("parameters")
+     */
+    private $parameters = [];
+
+    public function __construct(string $name, array $value, array $parameters = [])
     {
         $this->name = $name;
         $this->value = $value;
+        $this->parameters = $parameters;
     }
 
     public function getName(): string
@@ -41,5 +50,23 @@ final class HttpHeader
     public function getValue(): array
     {
         return $this->value;
+    }
+
+    /**
+     * @return HttpHeaderParameter[]
+     */
+    public function getParameters(): array
+    {
+        return $this->parameters;
+    }
+
+    /**
+     * @return static
+     */
+    public function setParameters(array $parameters): HttpHeader
+    {
+        $this->parameters = $parameters;
+
+        return $this;
     }
 }

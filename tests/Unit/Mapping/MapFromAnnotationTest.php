@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Tests\Unit\Mapping;
 
+use HttpClientBinder\Mapping\Dto\HttpHeaderParameter;
 use HttpClientBinder\Tests\Base\Client\Dto\CreateDataRequest;
 use HttpClientBinder\Tests\Base\Client\Dto\CreateDataResponse;
 use HttpClientBinder\Tests\Base\Client\Dto\DataListResponse;
@@ -92,7 +93,9 @@ final class MapFromAnnotationTest extends AbstractAnnotationTestCase
                         ])),
                         new HttpHeaderBag([
                             new HttpHeader('Content-type', ['application/json']),
-                            new HttpHeader('X-Request-Id', ['update-data-{entityId}']),
+                            new HttpHeader('X-Request-Id', ['update-data-{dataId}'], [
+                                new HttpHeaderParameter('id', 0, 'dataId')
+                            ]),
                         ]),
                         new RequestType('data', 1, UpdateDataRequest::class)
                     ),

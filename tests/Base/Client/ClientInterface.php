@@ -46,7 +46,7 @@ interface ClientInterface
 
     /**
      * @HeaderBag({
-     *     @Header("X-Request-Id", values="update-data-{entityId}")
+     *     @Header("X-Request-Id", values="update-data-{dataId}")
      * })
      * @ParameterBag({
      *     @Parameter("id", alias="dataId", types={Parameter::TYPE_PATH, Parameter::TYPE_HEADER}),
