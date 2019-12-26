@@ -1,4 +1,5 @@
 # Http client binder
+[![GitHub Actions status | larexsetch/http-client-binder](https://github.com/larexsetch/http-client-binder/workflows/Check%20all%20tests/badge.svg)](https://github.com/LarexSetch/http-client-binder/actions?query=workflow%3A%22Check+all+tests%22)
 
 This library creates simple way bind the interface and http call to foreign endpoint
 
