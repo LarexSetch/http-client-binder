@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace HttpClientBinder\Proxy;
 
 use DomainException;
-use HttpClientBinder\Mapping\MappingBuilderFactoryInterface;
-use HttpClientBinder\Protocol\MagicProtocol;
+use HttpClientBinder\Fabrics\Mapping\MappingBuilderFactoryInterface;
+use HttpClientBinder\Protocol\MagicProtocolInterface;
 use HttpClientBinder\Proxy\Dto\Method;
 use HttpClientBinder\Proxy\Dto\MethodArgument;
 use HttpClientBinder\Proxy\Dto\RenderData;
@@ -48,7 +48,7 @@ final class RenderDataFactory implements RenderDataFactoryInterface
             new RenderData(
                 $this->classNameResolver->resolve($interfaceName),
                 $interfaceName,
-                MagicProtocol::class,
+                MagicProtocolInterface::class,
                 $this->getJsonString($interfaceName),
                 $this->buildMethods($interfaceName)
             );

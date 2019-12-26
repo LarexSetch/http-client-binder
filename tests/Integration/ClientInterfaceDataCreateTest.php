@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Tests\Integration;
 
-use HttpClientBinder\BinderBuilder;
+use HttpClientBinder\Fabrics\BinderBuilder;
 use HttpClientBinder\Tests\Base\AbstractAnnotationTestCase;
 use HttpClientBinder\Tests\Base\Client\ClientInterface;
 use HttpClientBinder\Tests\Base\Client\Dto\CreateDataRequest;

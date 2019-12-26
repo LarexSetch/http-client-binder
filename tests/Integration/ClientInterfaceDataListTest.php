@@ -6,7 +6,7 @@ namespace HttpClientBinder\Tests\Integration;
 
 use HttpClientBinder\Tests\Base\Client\Dto\DataElement;
 use HttpClientBinder\Tests\Base\Client\Dto\DataListResponse;
-use HttpClientBinder\BinderBuilder;
+use HttpClientBinder\Fabrics\BinderBuilder;
 use HttpClientBinder\Tests\Base\AbstractAnnotationTestCase;
 use HttpClientBinder\Tests\Base\Client\ClientInterface;
 

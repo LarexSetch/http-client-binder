@@ -6,7 +6,7 @@ namespace HttpClientBinder\Tests\Unit;
 
 use HttpClientBinder\Annotation\Client;
 use HttpClientBinder\Annotation\RequestMapping;
-use HttpClientBinder\BinderBuilder;
+use HttpClientBinder\Fabrics\BinderBuilder;
 use HttpClientBinder\Tests\Base\AbstractAnnotationTestCase;
 use Psr\Http\Message\StreamInterface;
 

@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Mapping;
+namespace HttpClientBinder\Fabrics\Mapping;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use HttpClientBinder\Mapping\Extractor\HeadersExtractor;
 use HttpClientBinder\Mapping\Extractor\RequestTypeExtractor;
 use HttpClientBinder\Mapping\Extractor\UrlParametersExtractor;
+use HttpClientBinder\Mapping\MapFromAnnotation;
+use HttpClientBinder\Mapping\MappingBuilderInterface;
 use ReflectionClass;
 
 final class MapFromAnnotationFactory implements MappingBuilderFactoryInterface

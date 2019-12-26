@@ -31,7 +31,7 @@ final class ProxySourceRender implements SourceRenderInterface
 
 declare(strict_types=1);
 
-use HttpClientBinder\Protocol\MagicProtocolFactoryInterface;
+use HttpClientBinder\Fabrics\Protocol\MagicProtocolFactoryInterface;
 use JMS\Serializer\SerializerInterface;
 
 class %CLASS_NAME% implements %INTERFACE_NAMESPACE%

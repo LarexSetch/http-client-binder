@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Mapping;
+namespace HttpClientBinder\Fabrics\Mapping;
+
+use HttpClientBinder\Mapping\MappingBuilderInterface;
 
 interface MappingBuilderFactoryInterface
 {

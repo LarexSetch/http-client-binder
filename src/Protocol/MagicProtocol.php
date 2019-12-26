@@ -7,8 +7,7 @@ namespace HttpClientBinder\Protocol;
 use HttpClientBinder\Codec\DecoderInterface;
 use HttpClientBinder\Mapping\Dto\MappingClient;
 use HttpClientBinder\Mapping\Dto\Endpoint;
-use HttpClientBinder\Protocol\RemoteCall\RemoteCallFactoryInterface;
-use HttpClientBinder\Protocol\ResponseDecoder\ResponseTypeBuilderFactoryInterface;
+use HttpClientBinder\Fabrics\RemoteCall\RemoteCallFactoryInterface;
 
 final class MagicProtocol implements MagicProtocolInterface
 {

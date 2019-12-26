@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder;
+namespace HttpClientBinder\Fabrics;
 
 use HttpClientBinder\Codec\DecoderInterface;
 use HttpClientBinder\Codec\EncoderInterface;
-use HttpClientBinder\Mapping\MapFromAnnotationFactory;
-use HttpClientBinder\Protocol\MagicProtocolFactory;
-use HttpClientBinder\Protocol\MagicProtocolFactoryInterface;
+use HttpClientBinder\Fabrics\Mapping\MapFromAnnotationFactory;
+use HttpClientBinder\Fabrics\Protocol\MagicProtocolFactory;
+use HttpClientBinder\Fabrics\Protocol\MagicProtocolFactoryInterface;
 use HttpClientBinder\Protocol\RequestBuilder\BodyEncoder;
 use HttpClientBinder\Protocol\RequestBuilder\StreamBuilder;
 use HttpClientBinder\Protocol\ResponseDecoder\ResponseDecoder;

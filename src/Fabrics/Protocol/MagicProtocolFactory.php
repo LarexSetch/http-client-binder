@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Protocol;
+namespace HttpClientBinder\Fabrics\Protocol;
 
 use HttpClientBinder\Codec\DecoderInterface;
 use HttpClientBinder\Codec\EncoderInterface;
 use HttpClientBinder\Mapping\Dto\MappingClient;
-use HttpClientBinder\Protocol\RemoteCall\RemoteCallFactory;
+use HttpClientBinder\Protocol\MagicProtocol;
+use HttpClientBinder\Protocol\MagicProtocolInterface;
+use HttpClientBinder\Fabrics\RemoteCall\RemoteCallFactory;
 use JMS\Serializer\SerializerInterface;
 
 final class MagicProtocolFactory implements MagicProtocolFactoryInterface
@@ -37,7 +39,7 @@ final class MagicProtocolFactory implements MagicProtocolFactoryInterface
         $this->decoder = $decoder;
     }
 
-    public function build(string $jsonMappings): MagicProtocol
+    public function build(string $jsonMappings): MagicProtocolInterface
     {
         return
             new MagicProtocol(
