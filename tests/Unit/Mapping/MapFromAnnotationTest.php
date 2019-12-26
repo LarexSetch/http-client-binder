@@ -81,20 +81,20 @@ final class MapFromAnnotationTest extends AbstractAnnotationTestCase
                         new HttpHeaderBag([
                             new HttpHeader('Content-type', ['application/json']),
                         ]),
-                        new RequestType('data', CreateDataRequest::class)
+                        new RequestType('data', 0, CreateDataRequest::class)
                     ),
                     new Endpoint(
                         'updateData',
                         'PUT',
                         UpdateDataResponse::class,
                         new Url('/api/v1/data/{dataId}', new UrlParameterBag([
-                            new UrlParameter('id', UrlParameter::TYPE_PATH, 'dataId')
+                            new UrlParameter('id', 0, UrlParameter::TYPE_PATH, 'dataId')
                         ])),
                         new HttpHeaderBag([
                             new HttpHeader('Content-type', ['application/json']),
                             new HttpHeader('X-Request-Id', ['update-data-{entityId}']),
                         ]),
-                        new RequestType('data', UpdateDataRequest::class)
+                        new RequestType('data', 1, UpdateDataRequest::class)
                     ),
                 ])
             );
