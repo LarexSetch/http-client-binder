@@ -28,31 +28,32 @@ final class Parameter
     private $argumentName;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $alias;
 
     /**
-     * @var string
+     * @var string[]
      */
-    private $type;
+    private $types = [];
 
     public function __construct(array $values)
     {
-        if(isset($values['value'])) {
+        if (isset($values['value'])) {
             $this->argumentName = $values['value'];
-        } elseif(isset($values['argument'])) {
+        } elseif (isset($values['argument'])) {
             $this->argumentName = $values["argument"];
         }
 
-        if(isset($values['alias'])) {
-            $this->alias = $values["alias"];
+        if (isset($values['types'])) {
+            $this->types =
+                is_array($values['types'])
+                    ? $values['types']
+                    : [$values['types']];
         }
 
-        if(isset($values['type'])) {
-            $this->type = $values["type"];
-        } else {
-            $this->type = self::TYPE_QUERY;
+        if (isset($values['alias'])) {
+            $this->alias = $values["alias"];
         }
 
         $this->checkParameter();
@@ -63,23 +64,23 @@ final class Parameter
         return $this->argumentName;
     }
 
-    public function getAlias(): string
+    public function getTypes(): array
+    {
+        return $this->types;
+    }
+
+    public function getAlias(): ?string
     {
         return $this->alias;
     }
 
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
     private function checkParameter(): void
     {
-        if(null === $this->argumentName) {
+        if (null === $this->argumentName) {
             throw $this->createException();
         }
 
-        if( !in_array($this->type, self::getTypes())) {
+        if (!$this->isTypesCorrect()) {
             throw $this->createIncorrectTypeException();
         }
     }
@@ -91,7 +92,7 @@ final class Parameter
                 'The parameter is not required but you must define as' .
                 '@Parameter("argumentName", alias="aliasForArgument", type="query") or' .
                 '@Parameter("argumentName", alias="aliasForArgument") or' .
-                '@Parameter("argumentName", type="query") or '.
+                '@Parameter("argumentName", type="query") or ' .
                 '@Parameter(argument="argumentName", type="query")'
             );
     }
@@ -100,13 +101,18 @@ final class Parameter
     {
         return
             new InvalidArgumentException(sprintf(
-                'Incorrect type %s available %s',
-                $this->type,
-                implode(',', self::getTypes())
+                'Incorrect types %s available %s',
+                implode(',', $this->types),
+                implode(',', self::allTypes())
             ));
     }
 
-    private static function getTypes(): array
+    private function isTypesCorrect(): bool
+    {
+        return 0 === count(array_diff($this->types, self::allTypes()));
+    }
+
+    private static function allTypes(): array
     {
         return [self::TYPE_QUERY, self::TYPE_PATH, self::TYPE_BODY, self::TYPE_HEADER];
     }

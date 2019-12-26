@@ -46,7 +46,9 @@ final class UrlParametersExtractor implements UrlParametersExtractorInterface
                         array_filter(
                             $parameterBag->getParameters(),
                             function (Parameter $parameter) {
-                                return in_array($parameter->getType(), [Parameter::TYPE_PATH, Parameter::TYPE_QUERY]);
+                                return
+                                    in_array(Parameter::TYPE_PATH, $parameter->getTypes()) ||
+                                    in_array(Parameter::TYPE_QUERY, $parameter->getTypes());
                             }
                         )
                     )
@@ -56,10 +58,10 @@ final class UrlParametersExtractor implements UrlParametersExtractorInterface
 
     private function resolveType(Parameter $parameter): string
     {
-        switch ($parameter->getType()) {
-            case Parameter::TYPE_QUERY:
+        switch (true) {
+            case in_array(Parameter::TYPE_QUERY, $parameter->getTypes()):
                 return UrlParameter::TYPE_QUERY;
-            case Parameter::TYPE_PATH:
+            case in_array(Parameter::TYPE_PATH, $parameter->getTypes()):
                 return UrlParameter::TYPE_PATH;
             default:
                 throw new Exception('Unavailable parameter');

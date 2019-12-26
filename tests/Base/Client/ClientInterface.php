@@ -32,13 +32,15 @@ interface ClientInterface
     public function getDataList(): DataListResponse;
 
     /**
+     * @ParameterBag({
+     *     @Parameter("data", types=Parameter::TYPE_BODY)
+     * })
      * @RequestMapping(
      *     "/api/v1/data",
      *     method="POST",
      *     requestType="application/json",
      *     responseType="application/json"
      * )
-     * @RequestBody("data")
      */
     public function createData(CreateDataRequest $data): CreateDataResponse;
 
@@ -47,8 +49,8 @@ interface ClientInterface
      *     @Header("X-Request-Id", values="update-data-{entityId}")
      * })
      * @ParameterBag({
-     *     @Parameter("id", alias="entityId", type=Parameter::TYPE_HEADER),
-     *     @Parameter("id", alias="dataId", type=Parameter::TYPE_PATH)
+     *     @Parameter("id", alias="dataId", types={Parameter::TYPE_PATH, Parameter::TYPE_HEADER}),
+     *     @Parameter("data", types=Parameter::TYPE_BODY)
      * })
      * @RequestMapping(
      *     "/api/v1/data/{dataId}",
@@ -56,7 +58,6 @@ interface ClientInterface
      *     requestType="application/json",
      *     responseType="application/json"
      * )
-     * @RequestBody(argumentName="data")
      */
     public function updateData(int $id, UpdateDataRequest $data): UpdateDataResponse;
 }

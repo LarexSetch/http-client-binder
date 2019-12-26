@@ -25,6 +25,9 @@ final class ParameterBag
         $this->parameters = $values["value"];
     }
 
+    /**
+     * @return Parameter[]
+     */
     public function getParameters(): array
     {
         return $this->parameters;

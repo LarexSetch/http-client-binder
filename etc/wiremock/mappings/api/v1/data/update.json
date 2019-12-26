@@ -5,6 +5,9 @@
     "headers": {
       "Content-Type": {
         "equalTo": "application/json"
+      },
+      "X-Request-Id": {
+        "equalTo": "update-data-10030"
       }
     },
     "bodyPatterns": [{
