@@ -1,4 +1,6 @@
 {
+  "name": "larexsetch/http-client-binder",
+  "description": "Http client binder is easy way to create http client",
   "autoload": {
     "psr-4": {
       "HttpClientBinder\\": "src/"
@@ -10,6 +12,7 @@
     }
   },
   "require": {
+    "php": "^7.2",
     "doctrine/annotations": "^1.8",
     "guzzlehttp/guzzle": "~6.0",
     "jms/serializer": "^3.3"
