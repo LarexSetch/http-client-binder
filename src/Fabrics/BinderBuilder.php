@@ -9,9 +9,9 @@ use HttpClientBinder\Codec\EncoderInterface;
 use HttpClientBinder\Fabrics\Mapping\MapFromAnnotationFactory;
 use HttpClientBinder\Fabrics\Protocol\MagicProtocolFactory;
 use HttpClientBinder\Fabrics\Protocol\MagicProtocolFactoryInterface;
-use HttpClientBinder\Protocol\RequestBuilder\BodyEncoder;
-use HttpClientBinder\Protocol\RequestBuilder\StreamBuilder;
-use HttpClientBinder\Protocol\ResponseDecoder\ResponseDecoder;
+use HttpClientBinder\Protocol\RemoteCall\RequestBuilder\BodyEncoder;
+use HttpClientBinder\Protocol\RemoteCall\RequestBuilder\StreamBuilder;
+use HttpClientBinder\Protocol\RemoteCall\ResponseDecoder\ResponseDecoder;
 use HttpClientBinder\Proxy\ProxyClassNameResolverInterface;
 use HttpClientBinder\Proxy\ProxyFactory;
 use HttpClientBinder\Proxy\ProxyFactoryRenderDecorator;
@@ -49,6 +49,11 @@ final class BinderBuilder implements BinderBuilderInterface
     private $className;
 
     /**
+     * @var string|null
+     */
+    private $baseUrl;
+
+    /**
      * @var string
      */
     private $tmpDir;
@@ -82,6 +87,7 @@ final class BinderBuilder implements BinderBuilderInterface
     public function target(string $className, string $url = null): BinderBuilderInterface
     {
         $this->className = $className;
+        $this->baseUrl = $url;
 
         return $this;
     }
@@ -148,7 +154,8 @@ final class BinderBuilder implements BinderBuilderInterface
             new MagicProtocolFactory(
                 $this->serializer,
                 $this->encoder,
-                $this->decoder
+                $this->decoder,
+                $this->baseUrl
             );
     }
 

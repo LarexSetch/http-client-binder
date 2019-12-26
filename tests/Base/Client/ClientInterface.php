@@ -14,11 +14,10 @@ use HttpClientBinder\Annotation\Header;
 use HttpClientBinder\Annotation\HeaderBag;
 use HttpClientBinder\Annotation\Parameter;
 use HttpClientBinder\Annotation\ParameterBag;
-use HttpClientBinder\Annotation\RequestBody;
 use HttpClientBinder\Annotation\RequestMapping;
 
 /**
- * @Client("http://wiremock:8080")
+ * @Client()
  */
 interface ClientInterface
 {

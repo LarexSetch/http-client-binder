@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Protocol\RequestBuilder;
+namespace HttpClientBinder\Protocol\RemoteCall\RequestBuilder;
 
 use HttpClientBinder\Codec\EncoderInterface;
 use HttpClientBinder\Codec\TypeBuilderInterface;
 use HttpClientBinder\Mapping\Dto\Endpoint;
-use JMS\Serializer\SerializerInterface;
 use Psr\Http\Message\StreamInterface;
 
 final class BodyResolver implements BodyResolverInterface

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Protocol\RequestBuilder;
+namespace HttpClientBinder\Protocol\RemoteCall\RequestBuilder;
 
 use HttpClientBinder\Codec\EncoderInterface;
 use HttpClientBinder\Codec\Type;

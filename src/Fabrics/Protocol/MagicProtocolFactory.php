@@ -29,14 +29,21 @@ final class MagicProtocolFactory implements MagicProtocolFactoryInterface
      */
     private $decoder;
 
+    /**
+     * @var string|null
+     */
+    private $baseUrl;
+
     public function __construct(
         SerializerInterface $serializer,
         EncoderInterface $encoder,
-        DecoderInterface $decoder
+        DecoderInterface $decoder,
+        ?string $baseUrl = null
     ) {
         $this->serializer = $serializer;
         $this->encoder = $encoder;
         $this->decoder = $decoder;
+        $this->baseUrl = $baseUrl;
     }
 
     public function build(string $jsonMappings): MagicProtocolInterface
@@ -47,7 +54,8 @@ final class MagicProtocolFactory implements MagicProtocolFactoryInterface
                 new RemoteCallFactory(
                     $this->serializer,
                     $this->encoder,
-                    $this->decoder
+                    $this->decoder,
+                    $this->baseUrl
                 )
             );
     }

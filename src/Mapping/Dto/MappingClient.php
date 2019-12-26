@@ -9,7 +9,7 @@ use JMS\Serializer\Annotation as Serializer;
 final class MappingClient
 {
     /**
-     * @var string
+     * @var string|null
      *
      * @Serializer\Type("string")
      * @Serializer\SerializedName("baseUrl")
@@ -24,12 +24,7 @@ final class MappingClient
      */
     private $endpointBag;
 
-    /**
-     * Client constructor.
-     * @param string $baseUrl
-     * @param EndpointBag $endpointBag
-     */
-    public function __construct(string $baseUrl, EndpointBag $endpointBag)
+    public function __construct(EndpointBag $endpointBag, ?string $baseUrl = null)
     {
         $this->baseUrl = $baseUrl;
         $this->endpointBag = $endpointBag;

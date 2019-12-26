@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Protocol\RequestBuilder;
+namespace HttpClientBinder\Protocol\RemoteCall\RequestBuilder;
 
 use Psr\Http\Message\StreamInterface;
 

@@ -64,7 +64,7 @@ final class MapFromAnnotation implements MappingBuilderInterface
         $client = $this->getClientAnnotation();
         $endpoints = array_map([$this, 'createEndpoint'], $this->reflectionClass->getMethods());
 
-        return new MappingClient($client->getBaseUrl(), new EndpointBag($endpoints));
+        return new MappingClient(new EndpointBag($endpoints), $client->getBaseUrl());
     }
 
     private function getClientAnnotation(): Client

@@ -64,7 +64,6 @@ final class MapFromAnnotationTest extends AbstractAnnotationTestCase
     {
         return
             new MappingClient(
-                'http://wiremock:8080',
                 new EndpointBag([
                     new Endpoint(
                         'getDataList',

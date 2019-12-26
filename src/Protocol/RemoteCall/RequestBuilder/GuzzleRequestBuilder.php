@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Protocol\RequestBuilder;
+namespace HttpClientBinder\Protocol\RemoteCall\RequestBuilder;
 
 use GuzzleHttp\Psr7\Request;
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use HttpClientBinder\Mapping\Dto\HttpHeader;
 use HttpClientBinder\Mapping\Dto\HttpHeaderParameter;
-use HttpClientBinder\Mapping\Dto\UrlParameter;
 use Psr\Http\Message\RequestInterface;
 
 final class GuzzleRequestBuilder implements RequestBuilderInterface

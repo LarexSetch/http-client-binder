@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Protocol;
 
-use HttpClientBinder\Codec\DecoderInterface;
 use HttpClientBinder\Mapping\Dto\MappingClient;
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use HttpClientBinder\Fabrics\RemoteCall\RemoteCallFactoryInterface;

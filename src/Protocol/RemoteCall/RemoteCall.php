@@ -7,9 +7,8 @@ namespace HttpClientBinder\Protocol\RemoteCall;
 use GuzzleHttp\ClientInterface;
 use HttpClientBinder\Codec\DecoderInterface;
 use HttpClientBinder\Mapping\Dto\Endpoint;
-use HttpClientBinder\Protocol\RequestBuilder\RequestBuilderInterface;
-use HttpClientBinder\Protocol\ResponseDecoder\ResponseTypeBuilder;
-use Psr\Http\Message\ResponseInterface;
+use HttpClientBinder\Protocol\RemoteCall\RequestBuilder\RequestBuilderInterface;
+use HttpClientBinder\Protocol\RemoteCall\ResponseDecoder\ResponseTypeBuilder;
 
 final class RemoteCall implements RemoteCallInterface
 {

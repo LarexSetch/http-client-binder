@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Protocol\ResponseDecoder;
+namespace HttpClientBinder\Protocol\RemoteCall\ResponseDecoder;
 
 use HttpClientBinder\Codec\DecoderInterface;
 use HttpClientBinder\Codec\Type;
