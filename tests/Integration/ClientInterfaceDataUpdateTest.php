@@ -19,7 +19,7 @@ final class ClientInterfaceDataUpdateTest extends AbstractAnnotationTestCase
     {
         /** @var ClientInterface $client */
         $client = BinderBuilder::builder()
-            ->target(ClientInterface::class, 'http://wiremock:8080')
+            ->target(ClientInterface::class, WIREMOCK_HOST)
             ->getClient()
         ;
 

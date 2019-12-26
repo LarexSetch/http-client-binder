@@ -1,0 +1,25 @@
+name: Integration tests
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Startup wiremock
+        run: |
+          docker run -it --rm \
+            -p 8080:8080 \
+            -v $PWD/etc/wiremock/mappings:/home/wiremock/mappings \
+            -v $PWD/etc/wiremock/files:/home/wiremock/__files \
+            rodolpheche/wiremock
+      - name: Install dependencies
+        run: composer install
+      - name: Run tests
+        run: |
+          vendor/bin/phpunit  --bootstrap workflows.phpunit.bootstrap.php tests/Integrations
