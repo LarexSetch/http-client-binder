@@ -18,6 +18,11 @@ final class Client
      */
     private $baseUrl;
 
+    /**
+     * @var Header[]
+     */
+    private $headers = [];
+
     public function __construct(array $value)
     {
         if(isset($value['value'])) {
@@ -25,10 +30,19 @@ final class Client
         } elseif(isset($value['baseUrl'])) {
             $this->baseUrl = $value['baseUrl'];
         }
+
+        if(isset($value['headers'])) {
+            $this->headers = $value['headers'];
+        }
     }
 
     public function getBaseUrl(): ?string
     {
         return $this->baseUrl;
+    }
+
+    public function getHeaders(): array
+    {
+        return $this->headers;
     }
 }

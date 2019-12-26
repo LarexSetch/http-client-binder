@@ -4,7 +4,10 @@
     "url": "/api/v1/data",
     "headers": {
       "Content-Type": {
-        "equalTo": "application/json"
+        "contains": "application/json"
+      },
+      "User-Agent": {
+        "contains": "Some-User-Agent/v1.0.5"
       }
     },
     "bodyPatterns": [{

@@ -98,6 +98,9 @@ final class MapFromAnnotationTest extends AbstractAnnotationTestCase
                         ]),
                         new RequestType('data', 1, UpdateDataRequest::class)
                     ),
+                ]),
+                new HttpHeaderBag([
+                    new HttpHeader("User-Agent", ["Some-User-Agent/v1.0.5"])
                 ])
             );
     }

@@ -9,14 +9,6 @@ use JMS\Serializer\Annotation as Serializer;
 final class MappingClient
 {
     /**
-     * @var string|null
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("baseUrl")
-     */
-    private $baseUrl;
-
-    /**
      * @var EndpointBag
      *
      * @Serializer\Type("HttpClientBinder\Mapping\Dto\EndpointBag")
@@ -24,10 +16,27 @@ final class MappingClient
      */
     private $endpointBag;
 
-    public function __construct(EndpointBag $endpointBag, ?string $baseUrl = null)
+    /**
+     * @var HttpHeaderBag
+     *
+     * @Serializer\Type("HttpClientBinder\Mapping\Dto\HttpHeaderBag")
+     * @Serializer\SerializedName("headerBag")
+     */
+    private $headerBag;
+
+    /**
+     * @var string|null
+     *
+     * @Serializer\Type("string")
+     * @Serializer\SerializedName("baseUrl")
+     */
+    private $baseUrl;
+
+    public function __construct(EndpointBag $endpointBag, HttpHeaderBag $headerBag, ?string $baseUrl = null)
     {
-        $this->baseUrl = $baseUrl;
         $this->endpointBag = $endpointBag;
+        $this->headerBag = $headerBag;
+        $this->baseUrl = $baseUrl;
     }
 
     public function getBaseUrl(): string
@@ -38,5 +47,10 @@ final class MappingClient
     public function getEndpointBag(): EndpointBag
     {
         return $this->endpointBag;
+    }
+
+    public function getHeaderBag(): HttpHeaderBag
+    {
+        return $this->headerBag;
     }
 }

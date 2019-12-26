@@ -17,7 +17,11 @@ use HttpClientBinder\Annotation\ParameterBag;
 use HttpClientBinder\Annotation\RequestMapping;
 
 /**
- * @Client()
+ * @Client(
+ *     headers={
+ *          @Header("User-Agent", values="Some-User-Agent/v1.0.5")
+ *     }
+ * )
  */
 interface ClientInterface
 {

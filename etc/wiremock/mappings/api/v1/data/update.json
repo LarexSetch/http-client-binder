@@ -4,7 +4,10 @@
     "url": "/api/v1/data/10030",
     "headers": {
       "Content-Type": {
-        "equalTo": "application/json"
+        "contains": "application/json"
+      },
+      "User-Agent": {
+        "contains": "Some-User-Agent/v1.0.5"
       },
       "X-Request-Id": {
         "contains": "update-data-10030"

@@ -7,7 +7,10 @@ namespace HttpClientBinder\Mapping;
 use Doctrine\Common\Annotations\Reader;
 use DomainException;
 use HttpClientBinder\Annotation\Client;
+use HttpClientBinder\Annotation\Header;
 use HttpClientBinder\Annotation\RequestMapping;
+use HttpClientBinder\Mapping\Dto\HttpHeader;
+use HttpClientBinder\Mapping\Dto\HttpHeaderBag;
 use HttpClientBinder\Mapping\Dto\MappingClient;
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use HttpClientBinder\Mapping\Dto\EndpointBag;
@@ -64,7 +67,17 @@ final class MapFromAnnotation implements MappingBuilderInterface
         $client = $this->getClientAnnotation();
         $endpoints = array_map([$this, 'createEndpoint'], $this->reflectionClass->getMethods());
 
-        return new MappingClient(new EndpointBag($endpoints), $client->getBaseUrl());
+        return
+            new MappingClient(
+                new EndpointBag($endpoints),
+                new HttpHeaderBag(array_map(
+                    function (Header $header) {
+                        return new HttpHeader($header->getHeader(), $header->getValues());
+                    },
+                    $client->getHeaders()
+                )),
+                $client->getBaseUrl()
+            );
     }
 
     private function getClientAnnotation(): Client

@@ -79,7 +79,20 @@ final class RemoteCallFactory implements RemoteCallFactoryInterface
 
         return
             new GuzzleClient(
-                ['base_uri' => $baseUrl]
+                [
+                    'base_uri' => $baseUrl,
+                    'headers' => $this->buildHeaders($client)
+                ]
             );
+    }
+
+    private function buildHeaders(MappingClient $client): ?array
+    {
+        $headers = [];
+        foreach ($client->getHeaderBag()->getHeaders() as $header) {
+            $headers[$header->getName()] = $header->getValue();
+        }
+
+        return $headers;
     }
 }
