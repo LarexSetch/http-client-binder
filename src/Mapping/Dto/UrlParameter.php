@@ -20,6 +20,14 @@ final class UrlParameter
     private $argument;
 
     /**
+     * @var int
+     *
+     * @Serializer\Type("integer")
+     * @Serializer\SerializedName("argumentIndex")
+     */
+    private $argumentIndex;
+
+    /**
      * @var string
      *
      * @Serializer\Type("string")
@@ -35,9 +43,10 @@ final class UrlParameter
      */
     private $alias;
 
-    public function __construct(string $argument, string $type, ?string $alias = null)
+    public function __construct(string $argument, int $argumentIndex, string $type, ?string $alias = null)
     {
         $this->argument = $argument;
+        $this->argumentIndex = $argumentIndex;
         $this->type = $type;
         $this->alias = $alias;
     }
@@ -45,6 +54,11 @@ final class UrlParameter
     public function getArgument(): string
     {
         return $this->argument;
+    }
+
+    public function getArgumentIndex(): int
+    {
+        return $this->argumentIndex;
     }
 
     public function getType(): string

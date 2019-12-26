@@ -50,6 +50,7 @@ final class RequestTypeExtractor implements RequestTypeExtractorInterface
         return
             new RequestType(
                 $parameter->getName(),
+                $parameter->getPosition(),
                 $type->getName()
             );
     }

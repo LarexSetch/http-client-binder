@@ -17,7 +17,6 @@ final class ClientInterfaceDataUpdateTest extends AbstractAnnotationTestCase
      */
     public function update(): void
     {
-        $this->markTestSkipped("Does not work");
         /** @var ClientInterface $client */
         $client = BinderBuilder::builder()
             ->target(ClientInterface::class)
@@ -44,8 +43,8 @@ final class ClientInterfaceDataUpdateTest extends AbstractAnnotationTestCase
         return
             (new UpdateDataResponse())
                 ->setId(10030)
-                ->setPropertyOne('one')
-                ->setPropertyTwo('two')
+                ->setPropertyOne('Some value of one property')
+                ->setPropertyTwo('The two value')
             ;
     }
 }

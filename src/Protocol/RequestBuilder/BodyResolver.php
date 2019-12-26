@@ -42,12 +42,12 @@ final class BodyResolver implements BodyResolverInterface
     {
         if (
             null === $endpoint->getRequestType() ||
-            !key_exists($endpoint->getRequestType()->getArgument(), $arguments)
+            !key_exists($endpoint->getRequestType()->getIndex(), $arguments)
         ) {
             return null;
         }
 
-        $body = $arguments[$endpoint->getRequestType()->getArgument()];
+        $body = $arguments[$endpoint->getRequestType()->getIndex()];
         if (is_string($body)) {
             return $this->streamBuilder->build($body);
         }

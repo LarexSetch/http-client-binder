@@ -6,11 +6,17 @@
       "Content-Type": {
         "equalTo": "application/json"
       }
-    }
+    },
+    "bodyPatterns": [{
+      "equalToJson": {
+        "propertyOne": "one",
+        "propertyTwo": "two"
+      }
+    }]
   },
   "response": {
     "status": 200,
-    "bodyFileName": "api/v1/data/listResponse.json",
+    "bodyFileName": "api/v1/data/createResponse.json",
     "headers": {
       "Content-Type": "application/json"
     }

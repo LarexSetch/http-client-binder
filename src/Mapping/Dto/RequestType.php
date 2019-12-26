@@ -17,6 +17,14 @@ final class RequestType
     private $argument;
 
     /**
+     * @var int
+     *
+     * @Serializer\Type("integer")
+     * @Serializer\SerializedName("index")
+     */
+    private $index;
+
+    /**
      * @var string
      *
      * @Serializer\Type("string")
@@ -24,15 +32,21 @@ final class RequestType
      */
     private $type;
 
-    public function __construct(string $argument, string $type)
+    public function __construct(string $argument, int $index, string $type)
     {
         $this->argument = $argument;
+        $this->index = $index;
         $this->type = $type;
     }
 
     public function getArgument(): string
     {
         return $this->argument;
+    }
+
+    public function getIndex(): int
+    {
+        return $this->index;
     }
 
     public function getType(): string

@@ -6,7 +6,6 @@ namespace HttpClientBinder\Protocol\RequestBuilder;
 
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use HttpClientBinder\Mapping\Dto\UrlParameter;
-use HttpClientBinder\Mapping\Enum\UrlParameterType;
 
 final class UrlBuilder implements UrlBuilderInterface
 {
@@ -21,9 +20,10 @@ final class UrlBuilder implements UrlBuilderInterface
     {
         $replaceParameters = [];
         foreach ($endpoint->getUrl()->getParameterBag()->getParameters() as $parameter) {
-            if ($this->isValid($parameter, $arguments) && UrlParameterType::PATH() === $parameter->getType()) {
-                $key = sprintf('{%s}', $parameter->getName());
-                $replaceParameters[$key] = $arguments[$parameter->getName()];
+            if (UrlParameter::TYPE_PATH === $parameter->getType()) {
+                $this->checkArgument($parameter, $arguments);
+                $key = sprintf('{%s}', $parameter->getAlias() ?? $parameter->getArgument());
+                $replaceParameters[$key] = $arguments[$parameter->getArgumentIndex()];
             }
         }
 
@@ -44,18 +44,32 @@ final class UrlBuilder implements UrlBuilderInterface
     {
         $queryParameters = [];
         foreach ($endpoint->getUrl()->getParameterBag()->getParameters() as $parameter) {
-            if ($this->isValid($parameter, $arguments) && UrlParameterType::QUERY() === $parameter->getType()) {
-                $queryParameters[$parameter->getName()] = $arguments[$parameter->getName()];
+            if (UrlParameter::TYPE_QUERY === $parameter->getType()) {
+                $this->checkArgument($parameter, $arguments);
+                $key = $parameter->getAlias() ?? $parameter->getArgument();
+                $queryParameters[$key] = $arguments[$parameter->getArgumentIndex()];
             }
         }
 
         return $queryParameters;
     }
 
-    private function isValid(UrlParameter $parameter, array $arguments): bool
+    private function checkArgument(UrlParameter $parameter, array $arguments): void
     {
-        return
-            key_exists($parameter->getName(), $arguments) &&
-            is_scalar($arguments[$parameter->getName()]);
+        if(!key_exists($parameter->getArgumentIndex(), $arguments)) {
+            throw new \DomainException(sprintf(
+                "Cannot find argument on position %s for parameter %s",
+                $parameter->getArgumentIndex(),
+                $parameter->getArgument()
+            ));
+        }
+
+        if(!is_scalar($arguments[$parameter->getArgumentIndex()])) {
+            throw new \DomainException(sprintf(
+                "Argument must be scalar on position %s name %s",
+                $parameter->getArgumentIndex(),
+                $parameter->getArgument()
+            ));
+        }
     }
 }

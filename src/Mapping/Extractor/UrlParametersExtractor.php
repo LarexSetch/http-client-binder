@@ -9,6 +9,7 @@ use HttpClientBinder\Mapping\Dto\UrlParameter;
 use HttpClientBinder\Mapping\Dto\UrlParameterBag;
 use ReflectionMethod;
 use Exception;
+use DomainException;
 
 final class UrlParametersExtractor implements UrlParametersExtractorInterface
 {
@@ -33,10 +34,11 @@ final class UrlParametersExtractor implements UrlParametersExtractorInterface
             new UrlParameterBag(
                 array_values(
                     array_map(
-                        function (Parameter $parameter) {
+                        function (Parameter $parameter) use ($method) {
                             return
                                 new UrlParameter(
                                     $parameter->getArgumentName(),
+                                    $this->resolveArgumentIndex($method, $parameter),
                                     $this->resolveType($parameter),
                                     $parameter->getAlias()
                                 );
@@ -62,5 +64,20 @@ final class UrlParametersExtractor implements UrlParametersExtractorInterface
             default:
                 throw new Exception('Unavailable parameter');
         }
+    }
+
+    private function resolveArgumentIndex(ReflectionMethod $method, Parameter $parameter): int
+    {
+        foreach ($method->getParameters() as $methodParameter) {
+            if ($methodParameter->getName() === $parameter->getArgumentName()) {
+                return $methodParameter->getPosition();
+            }
+        }
+
+        throw new DomainException(sprintf(
+            'Unexpected parameter %s in method %s',
+            $parameter->getArgumentName(),
+            $method->getName()
+        ));
     }
 }

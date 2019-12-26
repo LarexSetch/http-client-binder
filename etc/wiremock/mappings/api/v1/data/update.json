@@ -7,7 +7,7 @@
         "equalTo": "application/json"
       }
     },
-    "bodyPattern": [{
+    "bodyPatterns": [{
       "equalToJson": {
         "propertyOne": "Some value of one property",
         "propertyTwo": "The two value"
