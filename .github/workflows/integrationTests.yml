@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v1
       - name: Startup wiremock
         run: |
-          docker run -it --rm \
+          docker run --rm \
             -p 8080:8080 \
             -v $PWD/etc/wiremock/mappings:/home/wiremock/mappings \
             -v $PWD/etc/wiremock/files:/home/wiremock/__files \
