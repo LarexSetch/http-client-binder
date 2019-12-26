@@ -1,49 +1,30 @@
 # Http client binder
+
 [![GitHub Actions status | larexsetch/http-client-binder](https://github.com/larexsetch/http-client-binder/workflows/Check%20all%20tests/badge.svg)](https://github.com/LarexSetch/http-client-binder/actions?query=workflow%3A%22Check+all+tests%22)
 
 This library creates simple way bind the interface and http call to foreign endpoint
 
-## Example
+## Installation
+
+```bash
+composer require larexsetch/http-client-binder
+```
+
+## Create client interface
+
+You can see example here: [HttpClientBinder\Tests\Base\Client\ClientInterface](https://github.com/LarexSetch/http-client-binder/blob/master/tests/Base/Client/ClientInterface.php)
+
+## Build the client
 
 ```php
 <?php
 
-use HttpClientBinder\Annotation\Client;
-use HttpClientBinder\Annotation\RequestMapping;
-
-/**
- * @Client(baseUrl="http://test.com")
- */
-interface SomeRemoteApiInterface {
-    /**
-     * @RequestMapping("/", method="GET", responseType="application/json")
-     */
-    public function getItem(int $id): SpecificData;
-}
-
-/**
- * Object to deserialize
- */
-class SpecificData {}
+/** @var YourClientInterface $client */
+$client = 
+    \HttpClientBinder\Fabrics\BinderBuilder::builder()
+        ->temporaryDirectory("/path/to/temporary/directory") // Default /tmp
+        ->encoder($encoder) // Custom encoder 
+        ->decoder($decoder) // Custom decoder
+        ->target(YourClientInterface::class, $baseUrl) // $baseUrl may be declare by annotation @Client(baseUrl="http://example.com")
+        ->getClient();
 ```
-
-You must build the client
-
-```php
-
-```
-
-```
-docker build -f etc/docker/php/Dockerfile localphp
-docker run -it --rm --name symfonyclientbinder-php -v .:/usr/src/myapp -w /usr/src/myapp localphp bash
-```
-
-Serializer - can connect any one
-Deserializer - can connect any one
-Get parameters builder - can connect any one
-Headers builder - can connect any one
-Interceptor - can add any one
-Implementation builder
-
-@HeaderLine
-@Header("Key", value="valu")
