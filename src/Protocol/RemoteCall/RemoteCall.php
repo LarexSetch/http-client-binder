@@ -27,20 +27,27 @@ final class RemoteCall implements RemoteCallInterface
      */
     private $requestBuilder;
 
+    /**
+     * @var RequestInterceptorInterface
+     */
+    private $requestInterceptor;
+
     public function __construct(
         ClientInterface $client,
         RequestBuilderInterface $requestBuilder,
-        DecoderInterface $decoder
+        DecoderInterface $decoder,
+        RequestInterceptorInterface $requestInterceptor
     ) {
         $this->client = $client;
         $this->requestBuilder = $requestBuilder;
         $this->decoder = $decoder;
+        $this->requestInterceptor = $requestInterceptor;
     }
 
     public function invoke(Endpoint $endpoint, array $arguments)
     {
         $request = $this->requestBuilder->build($endpoint, $arguments);
-        $response = $this->client->send($request);
+        $response = $this->client->send($this->requestInterceptor->intercept($request));
 
         return
             $this->decoder->decode(

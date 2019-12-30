@@ -10,6 +10,7 @@ use HttpClientBinder\Mapping\Dto\MappingClient;
 use HttpClientBinder\Protocol\MagicProtocol;
 use HttpClientBinder\Protocol\MagicProtocolInterface;
 use HttpClientBinder\Fabrics\RemoteCall\RemoteCallFactory;
+use HttpClientBinder\Protocol\RemoteCall\RequestInterceptorInterface;
 use JMS\Serializer\SerializerInterface;
 
 final class MagicProtocolFactory implements MagicProtocolFactoryInterface
@@ -30,6 +31,11 @@ final class MagicProtocolFactory implements MagicProtocolFactoryInterface
     private $decoder;
 
     /**
+     * @var RequestInterceptorInterface
+     */
+    private $requestInterceptor;
+
+    /**
      * @var string|null
      */
     private $baseUrl;
@@ -38,11 +44,13 @@ final class MagicProtocolFactory implements MagicProtocolFactoryInterface
         SerializerInterface $serializer,
         EncoderInterface $encoder,
         DecoderInterface $decoder,
+        RequestInterceptorInterface $requestInterceptor,
         ?string $baseUrl = null
     ) {
         $this->serializer = $serializer;
         $this->encoder = $encoder;
         $this->decoder = $decoder;
+        $this->requestInterceptor = $requestInterceptor;
         $this->baseUrl = $baseUrl;
     }
 
@@ -55,6 +63,7 @@ final class MagicProtocolFactory implements MagicProtocolFactoryInterface
                     $this->serializer,
                     $this->encoder,
                     $this->decoder,
+                    $this->requestInterceptor,
                     $this->baseUrl
                 )
             );

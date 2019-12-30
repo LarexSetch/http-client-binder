@@ -6,11 +6,14 @@ namespace HttpClientBinder\Fabrics;
 
 use HttpClientBinder\Codec\DecoderInterface;
 use HttpClientBinder\Codec\EncoderInterface;
+use HttpClientBinder\Codec\TypeBuilderInterface;
 use HttpClientBinder\Fabrics\Mapping\MapFromAnnotationFactory;
 use HttpClientBinder\Fabrics\Protocol\MagicProtocolFactory;
 use HttpClientBinder\Fabrics\Protocol\MagicProtocolFactoryInterface;
 use HttpClientBinder\Protocol\RemoteCall\RequestBuilder\BodyEncoder;
 use HttpClientBinder\Protocol\RemoteCall\RequestBuilder\StreamBuilder;
+use HttpClientBinder\Protocol\RemoteCall\RequestInterceptorChain;
+use HttpClientBinder\Protocol\RemoteCall\RequestInterceptorInterface;
 use HttpClientBinder\Protocol\RemoteCall\ResponseDecoder\ResponseDecoder;
 use HttpClientBinder\Proxy\ProxyClassNameResolverInterface;
 use HttpClientBinder\Proxy\ProxyFactory;
@@ -37,6 +40,11 @@ final class BinderBuilder implements BinderBuilderInterface
      * @var DecoderInterface
      */
     private $decoder;
+
+    /**
+     * @var RequestInterceptorInterface
+     */
+    private $requestInterceptor;
 
     /**
      * @var SerializerInterface
@@ -73,6 +81,23 @@ final class BinderBuilder implements BinderBuilderInterface
     public function decoder(DecoderInterface $decoder): BinderBuilderInterface
     {
         $this->decoder = $decoder;
+
+        return $this;
+    }
+
+    public function requestInterceptor(RequestInterceptorInterface $interceptor): BinderBuilderInterface
+    {
+        $this->requestInterceptor = $interceptor;
+
+        return $this;
+    }
+
+    /**
+     * @param RequestInterceptorInterface[] $interceptors
+     */
+    public function requestInterceptors(array $interceptors): BinderBuilderInterface
+    {
+        $this->requestInterceptor = RequestInterceptorChain::create($interceptors);
 
         return $this;
     }
@@ -123,6 +148,7 @@ final class BinderBuilder implements BinderBuilderInterface
         $this->encoder = $this->createDefaultEncoder();
         $this->decoder = $this->createDefaultDecoder();
         $this->classNameResolver = $this->createClassNameResolver();
+        $this->requestInterceptor = RequestInterceptorChain::create();
         $this->tmpDir = "/tmp";
     }
 
@@ -155,6 +181,7 @@ final class BinderBuilder implements BinderBuilderInterface
                 $this->serializer,
                 $this->encoder,
                 $this->decoder,
+                $this->requestInterceptor,
                 $this->baseUrl
             );
     }

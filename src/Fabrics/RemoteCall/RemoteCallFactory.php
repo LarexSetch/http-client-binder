@@ -17,6 +17,7 @@ use HttpClientBinder\Protocol\RemoteCall\RequestBuilder\GuzzleRequestBuilder;
 use HttpClientBinder\Protocol\RemoteCall\RequestBuilder\RequestTypeBuilder;
 use HttpClientBinder\Protocol\RemoteCall\RequestBuilder\StreamBuilder;
 use HttpClientBinder\Protocol\RemoteCall\RequestBuilder\UrlBuilder;
+use HttpClientBinder\Protocol\RemoteCall\RequestInterceptorInterface;
 use JMS\Serializer\SerializerInterface;
 
 final class RemoteCallFactory implements RemoteCallFactoryInterface
@@ -37,6 +38,11 @@ final class RemoteCallFactory implements RemoteCallFactoryInterface
     private $decoder;
 
     /**
+     * @var RequestInterceptorInterface
+     */
+    private $requestInterceptor;
+
+    /**
      * @var string|null
      */
     private $baseUrl;
@@ -45,11 +51,13 @@ final class RemoteCallFactory implements RemoteCallFactoryInterface
         SerializerInterface $serializer,
         EncoderInterface $encoder,
         DecoderInterface $decoder,
+        RequestInterceptorInterface $requestInterceptor,
         ?string $baseUrl = null
     ) {
         $this->serializer = $serializer;
         $this->encoder = $encoder;
         $this->decoder = $decoder;
+        $this->requestInterceptor = $requestInterceptor;
         $this->baseUrl = $baseUrl;
     }
 
@@ -66,7 +74,8 @@ final class RemoteCallFactory implements RemoteCallFactoryInterface
                         new RequestTypeBuilder()
                     )
                 ),
-                $this->decoder
+                $this->decoder,
+                $this->requestInterceptor
             );
     }
 
