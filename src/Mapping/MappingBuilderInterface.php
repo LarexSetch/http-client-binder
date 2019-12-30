@@ -8,5 +8,5 @@ use HttpClientBinder\Mapping\Dto\MappingClient;
 
 interface MappingBuilderInterface
 {
-    public function build(): MappingClient;
+    public function build(string $interfaceName): MappingClient;
 }

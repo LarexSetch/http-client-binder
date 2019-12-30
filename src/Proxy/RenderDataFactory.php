@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace HttpClientBinder\Proxy;
 
 use DomainException;
-use HttpClientBinder\Fabrics\Mapping\MappingBuilderFactoryInterface;
+use HttpClientBinder\Mapping\MappingBuilderInterface;
 use HttpClientBinder\Protocol\MagicProtocolInterface;
 use HttpClientBinder\Proxy\Dto\Method;
 use HttpClientBinder\Proxy\Dto\MethodArgument;
@@ -23,9 +23,9 @@ final class RenderDataFactory implements RenderDataFactoryInterface
     private $classNameResolver;
 
     /**
-     * @var MappingBuilderFactoryInterface
+     * @var MappingBuilderInterface
      */
-    private $mappingBuilderFactory;
+    private $mappingBuilder;
 
     /**
      * @var SerializerInterface
@@ -34,11 +34,11 @@ final class RenderDataFactory implements RenderDataFactoryInterface
 
     public function __construct(
         ProxyClassNameResolverInterface $classNameResolver,
-        MappingBuilderFactoryInterface $mappingBuilderFactory,
+        MappingBuilderInterface $mappingBuilder,
         SerializerInterface $serializer
     ) {
         $this->classNameResolver = $classNameResolver;
-        $this->mappingBuilderFactory = $mappingBuilderFactory;
+        $this->mappingBuilder = $mappingBuilder;
         $this->serializer = $serializer;
     }
 
@@ -59,7 +59,7 @@ final class RenderDataFactory implements RenderDataFactoryInterface
         return
             strtr(
                 $this->serializer->serialize(
-                    $this->mappingBuilderFactory->create($interfaceName)->build(),
+                    $this->mappingBuilder->build($interfaceName),
                     'json'
                 ),
                 [

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Mapping;
 
+use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
 use DomainException;
 use HttpClientBinder\Annotation\Client;
@@ -49,21 +50,19 @@ final class MapFromAnnotation implements MappingBuilderInterface
     private $requestTypeExtractor;
 
     public function __construct(
-        ReflectionClass $reflectionClass,
-        Reader $annotationReader,
         UrlParametersExtractorInterface $urlParametersExtractor,
         HeadersExtractorInterface $headersExtractor,
         RequestTypeExtractorInterface $requestTypeExtractor
     ) {
-        $this->reflectionClass = $reflectionClass;
-        $this->annotationReader = $annotationReader;
         $this->urlParametersExtractor = $urlParametersExtractor;
         $this->headersExtractor = $headersExtractor;
         $this->requestTypeExtractor = $requestTypeExtractor;
     }
 
-    public function build(): MappingClient
+    public function build(string $interfaceName): MappingClient
     {
+        $this->reflectionClass = new ReflectionClass($interfaceName);
+        $this->annotationReader = new AnnotationReader();
         $client = $this->getClientAnnotation();
         $endpoints = array_map([$this, 'createEndpoint'], $this->reflectionClass->getMethods());
 

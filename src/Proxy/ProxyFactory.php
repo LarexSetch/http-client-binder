@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Proxy;
 
-use HttpClientBinder\Fabrics\Protocol\MagicProtocolFactoryInterface;
+use HttpClientBinder\Protocol\MagicProtocolFactoryInterface;
 
 final class ProxyFactory implements ProxyFactoryInterface
 {

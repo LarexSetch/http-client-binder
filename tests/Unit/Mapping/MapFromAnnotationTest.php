@@ -38,7 +38,7 @@ final class MapFromAnnotationTest extends AbstractAnnotationTestCase
     {
         $builder = $this->createBuilder();
 
-        $clientMapping = $builder->build();
+        $clientMapping = $builder->build(ClientInterface::class);
 
         $this->assertEquals($this->createExpectedMapping(), $clientMapping);
     }
@@ -52,8 +52,6 @@ final class MapFromAnnotationTest extends AbstractAnnotationTestCase
 
         return
             new MapFromAnnotation(
-                new ReflectionClass(ClientInterface::class),
-                $reader,
                 new UrlParametersExtractor($reader),
                 new HeadersExtractor($reader),
                 new RequestTypeExtractor($reader)

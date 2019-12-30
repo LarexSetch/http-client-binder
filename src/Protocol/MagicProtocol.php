@@ -6,7 +6,6 @@ namespace HttpClientBinder\Protocol;
 
 use HttpClientBinder\Mapping\Dto\MappingClient;
 use HttpClientBinder\Mapping\Dto\Endpoint;
-use HttpClientBinder\Fabrics\RemoteCall\RemoteCallFactoryInterface;
 
 final class MagicProtocol implements MagicProtocolInterface
 {
@@ -16,16 +15,16 @@ final class MagicProtocol implements MagicProtocolInterface
     private $client;
 
     /**
-     * @var RemoteCallFactoryInterface
+     * @var RemoteCallStorageInterface
      */
-    private $remoteCallFactory;
+    private $remoteCallStorage;
 
     public function __construct(
         MappingClient $client,
-        RemoteCallFactoryInterface $remoteCallFactory
+        RemoteCallStorageInterface $remoteCallStorage
     ) {
         $this->client = $client;
-        $this->remoteCallFactory = $remoteCallFactory;
+        $this->remoteCallStorage = $remoteCallStorage;
     }
 
     /**
@@ -34,7 +33,7 @@ final class MagicProtocol implements MagicProtocolInterface
     public function __call(string $name, array $arguments)
     {
         $endpoint = $this->getEndpoint($name);
-        $remoteCall = $this->remoteCallFactory->build($this->client, $endpoint);
+        $remoteCall = $this->remoteCallStorage->get($name);
 
         return $remoteCall->invoke($endpoint, $arguments);
     }

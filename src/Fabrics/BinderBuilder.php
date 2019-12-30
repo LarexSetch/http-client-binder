@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Fabrics;
 
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\Reader;
 use HttpClientBinder\Codec\DecoderInterface;
 use HttpClientBinder\Codec\EncoderInterface;
-use HttpClientBinder\Codec\TypeBuilderInterface;
-use HttpClientBinder\Fabrics\Mapping\MapFromAnnotationFactory;
 use HttpClientBinder\Fabrics\Protocol\MagicProtocolFactory;
-use HttpClientBinder\Fabrics\Protocol\MagicProtocolFactoryInterface;
+use HttpClientBinder\Protocol\MagicProtocolFactoryInterface;
+use HttpClientBinder\Mapping\Extractor\HeadersExtractor;
+use HttpClientBinder\Mapping\Extractor\RequestTypeExtractor;
+use HttpClientBinder\Mapping\Extractor\UrlParametersExtractor;
+use HttpClientBinder\Mapping\MapFromAnnotation;
 use HttpClientBinder\Protocol\RemoteCall\RequestBuilder\BodyEncoder;
 use HttpClientBinder\Protocol\RemoteCall\RequestBuilder\StreamBuilder;
 use HttpClientBinder\Protocol\RemoteCall\RequestInterceptorChain;
@@ -130,7 +134,11 @@ final class BinderBuilder implements BinderBuilderInterface
                 new ProxySourceStorage($this->tmpDir),
                 new RenderDataFactory(
                     $this->classNameResolver,
-                    new MapFromAnnotationFactory(),
+                    new MapFromAnnotation(
+                        new UrlParametersExtractor(self::annotationReader()),
+                        new HeadersExtractor(self::annotationReader()),
+                        new RequestTypeExtractor(self::annotationReader())
+                    ),
                     $this->serializer
                 ),
                 new ProxyFactory(
@@ -155,8 +163,7 @@ final class BinderBuilder implements BinderBuilderInterface
     private function createClassNameResolver(): ProxyClassNameResolverInterface
     {
         return
-            new class implements ProxyClassNameResolverInterface
-            {
+            new class implements ProxyClassNameResolverInterface {
                 public function resolve(string $interfaceName): string
                 {
                     return
@@ -198,5 +205,10 @@ final class BinderBuilder implements BinderBuilderInterface
     private function createDefaultDecoder(): DecoderInterface
     {
         return new ResponseDecoder($this->serializer);
+    }
+
+    private static function annotationReader(): Reader
+    {
+        return new AnnotationReader();
     }
 }
