@@ -12,36 +12,12 @@ use HttpClientBinder\Protocol\RemoteCall\ResponseDecoder\ResponseTypeBuilder;
 
 final class RemoteCall implements RemoteCallInterface
 {
-    /**
-     * @var ClientInterface
-     */
-    private $client;
-
-    /**
-     * @var DecoderInterface
-     */
-    private $decoder;
-
-    /**
-     * @var RequestBuilderInterface
-     */
-    private $requestBuilder;
-
-    /**
-     * @var RequestInterceptorInterface
-     */
-    private $requestInterceptor;
-
     public function __construct(
-        ClientInterface $client,
-        RequestBuilderInterface $requestBuilder,
-        DecoderInterface $decoder,
-        RequestInterceptorInterface $requestInterceptor
+        private readonly ClientInterface $client,
+        private readonly RequestBuilderInterface $requestBuilder,
+        private readonly DecoderInterface $decoder,
+        private readonly RequestInterceptorInterface $requestInterceptor
     ) {
-        $this->client = $client;
-        $this->requestBuilder = $requestBuilder;
-        $this->decoder = $decoder;
-        $this->requestInterceptor = $requestInterceptor;
     }
 
     public function invoke(Endpoint $endpoint, array $arguments)

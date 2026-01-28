@@ -2,37 +2,26 @@
 
 namespace HttpClientBinder\Mapping\Extractor;
 
-use Doctrine\Common\Annotations\Reader;
+use DomainException;
 use HttpClientBinder\Annotation\Parameter;
-use HttpClientBinder\Annotation\ParameterBag;
-use HttpClientBinder\Annotation\RequestBody;
+use HttpClientBinder\Annotation\ParameterType;
 use HttpClientBinder\Mapping\Dto\RequestType;
 use ReflectionMethod;
 use ReflectionParameter;
-use DomainException;
 
 final class RequestTypeExtractor implements RequestTypeExtractorInterface
 {
-    /**
-     * @var Reader
-     */
-    private $annotationReader;
-
-    public function __construct(Reader $annotationReader)
-    {
-        $this->annotationReader = $annotationReader;
-    }
-
     public function extract(ReflectionMethod $method): ?RequestType
     {
-        /** @var ParameterBag $parametersBag */
-        $parametersBag = $this->annotationReader->getMethodAnnotation($method, ParameterBag::class);
-        if (null === $parametersBag) {
+        $parameters = $method->getAttributes(Parameter::class);
+        if (empty($parameters)) {
             return null;
         }
 
-        foreach ($parametersBag->getParameters() as $parameter) {
-            if (in_array(Parameter::TYPE_BODY, $parameter->getTypes())) {
+        foreach ($parameters as $reflectionAttribute) {
+            /** @var Parameter $parameter */
+            $parameter = $reflectionAttribute->newInstance();
+            if ($parameter->type === ParameterType::BODY) {
                 return $this->createRequestType($this->getReflectionParameter($method, $parameter));
             }
         }
@@ -43,16 +32,18 @@ final class RequestTypeExtractor implements RequestTypeExtractorInterface
     private function getReflectionParameter(ReflectionMethod $method, Parameter $parameter): ReflectionParameter
     {
         foreach ($method->getParameters() as $reflectionParameter) {
-            if ($reflectionParameter->getName() === $parameter->getArgumentName()) {
+            if ($reflectionParameter->getName() === $parameter->argumentName) {
                 return $reflectionParameter;
             }
         }
 
-        throw new DomainException(sprintf(
-            "Cannot find parameter %s in method %s",
-            $parameter->getArgumentName(),
-            $method->getName()
-        ));
+        throw new DomainException(
+            sprintf(
+                "Cannot find parameter %s in method %s",
+                $parameter->argumentName,
+                $method->getName()
+            )
+        );
     }
 
     private function createRequestType(ReflectionParameter $parameter): RequestType

@@ -55,13 +55,10 @@ final class RequestTypeBuilder implements TypeBuilderInterface
      */
     private function resolveContentType(string $contentType): ?string
     {
-        switch (true) {
-            case 'application/json' === $contentType:
-                return Type::FORMAT_JSON;
-            case 'application/xml'=== $contentType:
-                return Type::FORMAT_XML;
-            default:
-                throw new UnexpectedFormatException(sprintf('Unsupported content type %s', $contentType));
-        }
+        return match (true) {
+            'application/json' === $contentType => Type::FORMAT_JSON,
+            'application/xml' === $contentType => Type::FORMAT_XML,
+            default => throw new UnexpectedFormatException(sprintf('Unsupported content type %s', $contentType)),
+        };
     }
 }

@@ -6,40 +6,24 @@ namespace HttpClientBinder\Mapping\Dto;
 
 use JMS\Serializer\Annotation as Serializer;
 
-final class MappingClient
+final readonly class MappingClient
 {
-    /**
-     * @var EndpointBag
-     *
-     * @Serializer\Type("HttpClientBinder\Mapping\Dto\EndpointBag")
-     * @Serializer\SerializedName("endpointBag")
-     */
-    private $endpointBag;
+    public function __construct(
+        #[Serializer\Type(EndpointBag::class)]
+        #[Serializer\SerializedName("endpointBag")]
+        public EndpointBag $endpointBag,
 
-    /**
-     * @var HttpHeaderBag
-     *
-     * @Serializer\Type("HttpClientBinder\Mapping\Dto\HttpHeaderBag")
-     * @Serializer\SerializedName("headerBag")
-     */
-    private $headerBag;
+        #[Serializer\Type(HttpHeaderBag::class)]
+        #[Serializer\SerializedName("headerBag")]
+        public HttpHeaderBag $headerBag,
 
-    /**
-     * @var string|null
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("baseUrl")
-     */
-    private $baseUrl;
-
-    public function __construct(EndpointBag $endpointBag, HttpHeaderBag $headerBag, ?string $baseUrl = null)
-    {
-        $this->endpointBag = $endpointBag;
-        $this->headerBag = $headerBag;
-        $this->baseUrl = $baseUrl;
+        #[Serializer\Type("string")]
+        #[Serializer\SerializedName("baseUrl")]
+        public ?string $baseUrl = null
+    ) {
     }
 
-    public function getBaseUrl(): string
+    public function getBaseUrl(): ?string
     {
         return $this->baseUrl;
     }

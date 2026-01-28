@@ -6,56 +6,26 @@ namespace HttpClientBinder\Fabrics\Protocol;
 
 use HttpClientBinder\Codec\DecoderInterface;
 use HttpClientBinder\Codec\EncoderInterface;
+use HttpClientBinder\Fabrics\RemoteCall\RemoteCallFactory;
 use HttpClientBinder\Fabrics\RemoteCall\RemoteCallFactoryInterface;
 use HttpClientBinder\Mapping\Dto\MappingClient;
 use HttpClientBinder\Protocol\MagicProtocol;
 use HttpClientBinder\Protocol\MagicProtocolFactoryInterface;
 use HttpClientBinder\Protocol\MagicProtocolInterface;
-use HttpClientBinder\Fabrics\RemoteCall\RemoteCallFactory;
 use HttpClientBinder\Protocol\RemoteCall\RemoteCallInterface;
-use HttpClientBinder\Protocol\RemoteCallStorageInterface;
 use HttpClientBinder\Protocol\RemoteCall\RequestInterceptorInterface;
+use HttpClientBinder\Protocol\RemoteCallStorageInterface;
 use JMS\Serializer\SerializerInterface;
 
-final class MagicProtocolFactory implements MagicProtocolFactoryInterface
+final readonly class MagicProtocolFactory implements MagicProtocolFactoryInterface
 {
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    /**
-     * @var EncoderInterface
-     */
-    private $encoder;
-
-    /**
-     * @var DecoderInterface
-     */
-    private $decoder;
-
-    /**
-     * @var RequestInterceptorInterface
-     */
-    private $requestInterceptor;
-
-    /**
-     * @var string|null
-     */
-    private $baseUrl;
-
     public function __construct(
-        SerializerInterface $serializer,
-        EncoderInterface $encoder,
-        DecoderInterface $decoder,
-        RequestInterceptorInterface $requestInterceptor,
-        ?string $baseUrl = null
+        private SerializerInterface $serializer,
+        private EncoderInterface $encoder,
+        private DecoderInterface $decoder,
+        private RequestInterceptorInterface $requestInterceptor,
+        private ?string $baseUrl = null
     ) {
-        $this->serializer = $serializer;
-        $this->encoder = $encoder;
-        $this->decoder = $decoder;
-        $this->requestInterceptor = $requestInterceptor;
-        $this->baseUrl = $baseUrl;
     }
 
     public function build(string $jsonMappings): MagicProtocolInterface
@@ -90,10 +60,8 @@ final class MagicProtocolFactory implements MagicProtocolFactoryInterface
     {
         return
             new class implements RemoteCallStorageInterface {
-                /**
-                 * @var RemoteCallInterface
-                 */
-                private $remoteCalls;
+                /** @var RemoteCallInterface[] */
+                private array $remoteCalls = [];
 
                 public function set(string $name, RemoteCallInterface $remoteCall): RemoteCallStorageInterface
                 {
@@ -111,13 +79,11 @@ final class MagicProtocolFactory implements MagicProtocolFactoryInterface
 
     private function getRemoteCallFactory(): RemoteCallFactoryInterface
     {
-        return
-            new RemoteCallFactory(
-                $this->serializer,
-                $this->encoder,
-                $this->decoder,
-                $this->requestInterceptor,
-                $this->baseUrl
-            );
+        return new RemoteCallFactory(
+            $this->encoder,
+            $this->decoder,
+            $this->requestInterceptor,
+            $this->baseUrl
+        );
     }
 }

@@ -4,29 +4,15 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Annotation;
 
-use Doctrine\Common\Annotations\Annotation;
-use Doctrine\Common\Annotations\Annotation\Required;
-use Doctrine\Common\Annotations\Annotation\Target;
+use Attribute;
 
-/**
- * @Annotation
- * @Target({"CLASS", "METHOD"})
- */
-final class HeaderBag
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
+final readonly class HeaderBag
 {
     /**
-     * @var Header[]
-     * @Required
+     * @param Header[] $headers
      */
-    private $headers;
-
-    public function __construct(array $values)
+    public function __construct(public array $headers)
     {
-        $this->headers = $values["value"];
-    }
-
-    public function getHeaders(): array
-    {
-        return $this->headers;
     }
 }

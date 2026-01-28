@@ -6,42 +6,24 @@ namespace HttpClientBinder\Tests\Base\Client\Dto;
 
 use JMS\Serializer\Annotation as Serializer;
 
-class DataListResponse
+readonly class DataListResponse
 {
-    /**
-     * @var DataElement[]
-     *
-     * @Serializer\SerializedName("elements")
-     * @Serializer\Type("array<HttpClientBinder\Tests\Base\Client\Dto\DataElement>")
-     */
-    private $elements;
-
-    /**
-     * @var int
-     *
-     * @Serializer\SerializedName("elementsCount")
-     * @Serializer\Type("integer")
-     */
-    private $elementsCount;
-
-    /**
-     * @var int
-     *
-     * @Serializer\SerializedName("elementsOnPage")
-     * @Serializer\Type("integer")
-     */
-    private $elementsOnPage;
+    public function __construct(
+        #[Serializer\SerializedName("elements")]
+        #[Serializer\Type("array<HttpClientBinder\Tests\Base\Client\Dto\DataElement>")]
+        private array $elements,
+        #[Serializer\SerializedName("elementsCount")]
+        #[Serializer\Type("integer")]
+        private int $elementsCount,
+        #[Serializer\SerializedName("elementsOnPage")]
+        #[Serializer\Type("integer")]
+        private int $elementsOnPage,
+    ) {
+    }
 
     public function getElements(): array
     {
         return $this->elements;
-    }
-
-    public function setElements(array $elements): self
-    {
-        $this->elements = $elements;
-
-        return $this;
     }
 
     public function getElementsCount(): int
@@ -49,22 +31,8 @@ class DataListResponse
         return $this->elementsCount;
     }
 
-    public function setElementsCount(int $elementsCount): self
-    {
-        $this->elementsCount = $elementsCount;
-
-        return $this;
-    }
-
     public function getElementsOnPage(): int
     {
         return $this->elementsOnPage;
-    }
-
-    public function setElementsOnPage(int $elementsOnPage): self
-    {
-        $this->elementsOnPage = $elementsOnPage;
-
-        return $this;
     }
 }

@@ -6,49 +6,28 @@ namespace HttpClientBinder\Mapping\Dto;
 
 use JMS\Serializer\Annotation as Serializer;
 
-final class UrlParameter
+final readonly class UrlParameter
 {
     public const TYPE_QUERY = 'query';
     public const TYPE_PATH = 'path';
 
-    /**
-     * @var string
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("name")
-     */
-    private $argument;
+    public function __construct(
+        #[Serializer\Type("string")]
+        #[Serializer\SerializedName("name")]
+        public string $argument,
 
-    /**
-     * @var int
-     *
-     * @Serializer\Type("integer")
-     * @Serializer\SerializedName("argumentIndex")
-     */
-    private $argumentIndex;
+        #[Serializer\Type("integer")]
+        #[Serializer\SerializedName("argumentIndex")]
+        public int $argumentIndex,
 
-    /**
-     * @var string
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("type")
-     */
-    private $type;
+        #[Serializer\Type("string")]
+        #[Serializer\SerializedName("type")]
+        public string $type,
 
-    /**
-     * @var string|null
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("alias")
-     */
-    private $alias;
-
-    public function __construct(string $argument, int $argumentIndex, string $type, ?string $alias = null)
-    {
-        $this->argument = $argument;
-        $this->argumentIndex = $argumentIndex;
-        $this->type = $type;
-        $this->alias = $alias;
+        #[Serializer\Type("string")]
+        #[Serializer\SerializedName("alias")]
+        public ?string $alias = null
+    ) {
     }
 
     public function getArgument(): string

@@ -12,28 +12,20 @@ use Psr\Http\Message\StreamInterface;
 
 final class BinderBuilderTest extends AbstractAnnotationTestCase
 {
-    /**
-     * @test
-     */
-    public function build(): void
+    public function test_build(): void
     {
         /** @var SomeMyClient $client */
         $client =
-            BinderBuilder::builder()
-                ->target(SomeMyClient::class)
+            BinderBuilder::builder(SomeMyClient::class)
                 ->getClient();
 
         $this->assertInstanceOf(SomeMyClient::class, $client);
     }
 }
 
-/**
- * @Client(baseUrl="http://test.com")
- */
+#[Client(baseUrl: "https://test.com")]
 interface SomeMyClient
 {
-    /**
-     * @RequestMapping("/some/information/{id}", method="POST")
-     */
+    #[RequestMapping("/some/information/{id}", method: "POST")]
     public function getSomeInformation(int $id): StreamInterface;
 }

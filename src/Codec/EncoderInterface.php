@@ -8,8 +8,5 @@ use Psr\Http\Message\StreamInterface;
 
 interface EncoderInterface
 {
-    /**
-     * @param mixed $object
-     */
-    public function encode($object, Type $type): StreamInterface;
+    public function encode(mixed $object, Type $type): StreamInterface;
 }

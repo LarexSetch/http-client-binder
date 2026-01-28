@@ -6,19 +6,16 @@ namespace HttpClientBinder\Mapping\Dto;
 
 use JMS\Serializer\Annotation as Serializer;
 
-final class UrlParameterBag
+final readonly class UrlParameterBag
 {
     /**
-     * @var UrlParameter[]
-     *
-     * @Serializer\Type("array<HttpClientBinder\Mapping\Dto\UrlParameter>")
-     * @Serializer\SerializedName("parameters")
+     * @param UrlParameter[] $parameters
      */
-    private $parameters;
-
-    public function __construct(array $parameters)
-    {
-        $this->parameters = $parameters;
+    public function __construct(
+        #[Serializer\Type("array<" . UrlParameter::class . ">")]
+        #[Serializer\SerializedName("parameters")]
+        public array $parameters
+    ) {
     }
 
     /**

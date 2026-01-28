@@ -10,16 +10,11 @@ use HttpClientBinder\Codec\UnexpectedFormatException;
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use Psr\Http\Message\ResponseInterface;
 
-final class ResponseTypeBuilder implements TypeBuilderInterface
+final readonly class ResponseTypeBuilder implements TypeBuilderInterface
 {
-    /**
-     * @var ResponseInterface
-     */
-    private $response;
-
-    public function __construct(ResponseInterface $response)
-    {
-        $this->response = $response;
+    public function __construct(
+        private readonly ResponseInterface $response
+    ) {
     }
 
     public function build(Endpoint $endpoint): Type
@@ -56,10 +51,7 @@ final class ResponseTypeBuilder implements TypeBuilderInterface
     private function resolveFormat(array $values): string
     {
         foreach ($values as $item) {
-            $format = $this->resolveContentType($item);
-            if (null !== $format) {
-                return $format;
-            }
+            return $this->resolveContentType($item);
         }
 
         throw new UnexpectedFormatException('Cannot resolve format');
@@ -70,15 +62,11 @@ final class ResponseTypeBuilder implements TypeBuilderInterface
      */
     private function resolveContentType(string $contentType): string
     {
-        switch (true) {
-            case 'application/json' === $contentType:
-                return Type::FORMAT_JSON;
-            case 'application/xml'=== $contentType:
-                return Type::FORMAT_XML;
-            case preg_match('/text\//', $contentType):
-                return Type::FORMAT_TEXT;
-            default:
-                throw new UnexpectedFormatException(sprintf('Unsupported content type %s', $contentType));
-        }
+        return match (true) {
+            'application/json' === $contentType => Type::FORMAT_JSON,
+            'application/xml' === $contentType => Type::FORMAT_XML,
+            preg_match('/text\//', $contentType) => Type::FORMAT_TEXT,
+            default => throw new UnexpectedFormatException(sprintf('Unsupported content type %s', $contentType)),
+        };
     }
 }

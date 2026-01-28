@@ -6,14 +6,9 @@ namespace HttpClientBinder\Proxy;
 
 final class ProxySourceStorage implements SourceStorageInterface
 {
-    /**
-     * @var string
-     */
-    private $directory;
-
-    public function __construct(string $directory)
-    {
-        $this->directory = $directory;
+    public function __construct(
+        private readonly string $directory
+    ) {
         $this->checkDirectory();
     }
 

@@ -12,16 +12,11 @@ use HttpClientBinder\Tests\Base\Client\Dto\CreateDataResponse;
 
 final class ClientInterfaceDataCreateTest extends AbstractAnnotationTestCase
 {
-    /**
-     * @test
-     */
-    public function create(): void
+    public function test_create(): void
     {
         /** @var ClientInterface $client */
-        $client = BinderBuilder::builder()
-            ->target(ClientInterface::class, WIREMOCK_HOST)
-            ->getClient()
-        ;
+        $client = BinderBuilder::builder(ClientInterface::class, WIREMOCK_HOST)
+            ->getClient();
 
         $dataList = $client->createData($this->createRequest());
 
@@ -31,20 +26,11 @@ final class ClientInterfaceDataCreateTest extends AbstractAnnotationTestCase
 
     private function createRequest(): CreateDataRequest
     {
-        return
-            (new CreateDataRequest())
-                ->setPropertyOne("one")
-                ->setPropertyTwo("two")
-            ;
+        return (new CreateDataRequest("one", "two"));
     }
 
     private function createExpectedResponse(): CreateDataResponse
     {
-        return
-            (new CreateDataResponse())
-                ->setId(3298)
-                ->setPropertyOne('one')
-                ->setPropertyTwo('two')
-            ;
+        return (new CreateDataResponse(3298, 'one', 'two'));
     }
 }

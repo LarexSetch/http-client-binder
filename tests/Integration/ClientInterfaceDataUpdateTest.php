@@ -12,16 +12,11 @@ use HttpClientBinder\Tests\Base\Client\Dto\UpdateDataResponse;
 
 final class ClientInterfaceDataUpdateTest extends AbstractAnnotationTestCase
 {
-    /**
-     * @test
-     */
-    public function update(): void
+    public function test_update(): void
     {
         /** @var ClientInterface $client */
-        $client = BinderBuilder::builder()
-            ->target(ClientInterface::class, WIREMOCK_HOST)
-            ->getClient()
-        ;
+        $client = BinderBuilder::builder(ClientInterface::class, WIREMOCK_HOST)
+            ->getClient();
 
         $dataList = $client->updateData(10030, $this->createRequest());
 
@@ -31,20 +26,11 @@ final class ClientInterfaceDataUpdateTest extends AbstractAnnotationTestCase
 
     private function createRequest(): UpdateDataRequest
     {
-        return
-            (new UpdateDataRequest())
-                ->setPropertyOne("Some value of one property")
-                ->setPropertyTwo("The two value")
-            ;
+        return (new UpdateDataRequest('Some value of one property', 'The two value'));
     }
 
     private function createExpectedListResponse(): UpdateDataResponse
     {
-        return
-            (new UpdateDataResponse())
-                ->setId(10030)
-                ->setPropertyOne('Some value of one property')
-                ->setPropertyTwo('The two value')
-            ;
+        return (new UpdateDataResponse(10030, 'Some value of one property', 'The two value'));
     }
 }

@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Fabrics;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\Reader;
 use HttpClientBinder\Codec\DecoderInterface;
 use HttpClientBinder\Codec\EncoderInterface;
 use HttpClientBinder\Fabrics\Protocol\MagicProtocolFactory;
-use HttpClientBinder\Protocol\MagicProtocolFactoryInterface;
 use HttpClientBinder\Mapping\Extractor\HeadersExtractor;
 use HttpClientBinder\Mapping\Extractor\RequestTypeExtractor;
 use HttpClientBinder\Mapping\Extractor\UrlParametersExtractor;
 use HttpClientBinder\Mapping\MapFromAnnotation;
+use HttpClientBinder\Protocol\MagicProtocolFactoryInterface;
 use HttpClientBinder\Protocol\RemoteCall\RequestBuilder\BodyEncoder;
 use HttpClientBinder\Protocol\RemoteCall\RequestBuilder\StreamBuilder;
 use HttpClientBinder\Protocol\RemoteCall\RequestInterceptorChain;
@@ -28,68 +26,46 @@ use HttpClientBinder\Proxy\RenderDataFactory;
 use JMS\Serializer\SerializerBuilder;
 use JMS\Serializer\SerializerInterface;
 
-final class BinderBuilder implements BinderBuilderInterface
+/**
+ * @template T
+ */
+final class BinderBuilder
 {
-    /**
-     * @var ProxyClassNameResolverInterface
-     */
-    private $classNameResolver;
+    private ProxyClassNameResolverInterface $classNameResolver;
+
+    private EncoderInterface $encoder;
+
+    private DecoderInterface $decoder;
+
+    private RequestInterceptorInterface $requestInterceptor;
+
+    private SerializerInterface $serializer;
+
+    private string $tmpDir;
 
     /**
-     * @var EncoderInterface
+     * @param class-string<T> $className
      */
-    private $encoder;
-
-    /**
-     * @var DecoderInterface
-     */
-    private $decoder;
-
-    /**
-     * @var RequestInterceptorInterface
-     */
-    private $requestInterceptor;
-
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    /**
-     * @var string
-     */
-    private $className;
-
-    /**
-     * @var string|null
-     */
-    private $baseUrl;
-
-    /**
-     * @var string
-     */
-    private $tmpDir;
-
-    public static function builder(): BinderBuilderInterface
+    public static function builder(string $className, ?string $baseUrl = null): BinderBuilder
     {
-        return new BinderBuilder();
+        return new self($className, $baseUrl);
     }
 
-    public function encoder(EncoderInterface $encoder): BinderBuilderInterface
+    public function encoder(EncoderInterface $encoder): BinderBuilder
     {
         $this->encoder = $encoder;
 
         return $this;
     }
 
-    public function decoder(DecoderInterface $decoder): BinderBuilderInterface
+    public function decoder(DecoderInterface $decoder): BinderBuilder
     {
         $this->decoder = $decoder;
 
         return $this;
     }
 
-    public function requestInterceptor(RequestInterceptorInterface $interceptor): BinderBuilderInterface
+    public function requestInterceptor(RequestInterceptorInterface $interceptor): BinderBuilder
     {
         $this->requestInterceptor = $interceptor;
 
@@ -99,33 +75,25 @@ final class BinderBuilder implements BinderBuilderInterface
     /**
      * @param RequestInterceptorInterface[] $interceptors
      */
-    public function requestInterceptors(array $interceptors): BinderBuilderInterface
+    public function requestInterceptors(array $interceptors): BinderBuilder
     {
         $this->requestInterceptor = RequestInterceptorChain::create($interceptors);
 
         return $this;
     }
 
-    public function temporaryDirectory(string $temporaryDirectory): BinderBuilderInterface
+    public function temporaryDirectory(string $temporaryDirectory): BinderBuilder
     {
         $this->tmpDir = $temporaryDirectory;
 
         return $this;
     }
 
-    public function target(string $className, string $url = null): BinderBuilderInterface
-    {
-        $this->className = $className;
-        $this->baseUrl = $url;
-
-        return $this;
-    }
-
     /**
      * Returns instance of $className in method target
-     * @return mixed
+     * @return T
      */
-    public function getClient()
+    public function getClient(): mixed
     {
         $proxyFactory =
             new ProxyFactoryRenderDecorator(
@@ -135,9 +103,9 @@ final class BinderBuilder implements BinderBuilderInterface
                 new RenderDataFactory(
                     $this->classNameResolver,
                     new MapFromAnnotation(
-                        new UrlParametersExtractor(self::annotationReader()),
-                        new HeadersExtractor(self::annotationReader()),
-                        new RequestTypeExtractor(self::annotationReader())
+                        new UrlParametersExtractor(),
+                        new HeadersExtractor(),
+                        new RequestTypeExtractor()
                     ),
                     $this->serializer
                 ),
@@ -150,8 +118,11 @@ final class BinderBuilder implements BinderBuilderInterface
         return $proxyFactory->build($this->className);
     }
 
-    private function __construct()
-    {
+    private function __construct(
+        private readonly string $className,
+        /* @param class-string<T> $className */
+        private readonly ?string $baseUrl = null
+    ) {
         $this->serializer = SerializerBuilder::create()->build();
         $this->encoder = $this->createDefaultEncoder();
         $this->decoder = $this->createDefaultDecoder();
@@ -173,7 +144,7 @@ final class BinderBuilder implements BinderBuilderInterface
                                 $interfaceName,
                                 [
                                     "Interface" => "",
-                                    "\\" => "_"
+                                    "\\" => "_",
                                 ]
                             )
                         );
@@ -205,10 +176,5 @@ final class BinderBuilder implements BinderBuilderInterface
     private function createDefaultDecoder(): DecoderInterface
     {
         return new ResponseDecoder($this->serializer);
-    }
-
-    private static function annotationReader(): Reader
-    {
-        return new AnnotationReader();
     }
 }

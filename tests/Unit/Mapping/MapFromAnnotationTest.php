@@ -4,17 +4,11 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Tests\Unit\Mapping;
 
-use HttpClientBinder\Mapping\Dto\HttpHeaderParameter;
-use HttpClientBinder\Tests\Base\Client\Dto\CreateDataRequest;
-use HttpClientBinder\Tests\Base\Client\Dto\CreateDataResponse;
-use HttpClientBinder\Tests\Base\Client\Dto\DataListResponse;
-use HttpClientBinder\Tests\Base\Client\Dto\UpdateDataRequest;
-use HttpClientBinder\Tests\Base\Client\Dto\UpdateDataResponse;
-use Doctrine\Common\Annotations\AnnotationReader;
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use HttpClientBinder\Mapping\Dto\EndpointBag;
 use HttpClientBinder\Mapping\Dto\HttpHeader;
 use HttpClientBinder\Mapping\Dto\HttpHeaderBag;
+use HttpClientBinder\Mapping\Dto\HttpHeaderParameter;
 use HttpClientBinder\Mapping\Dto\MappingClient;
 use HttpClientBinder\Mapping\Dto\RequestType;
 use HttpClientBinder\Mapping\Dto\Url;
@@ -27,14 +21,15 @@ use HttpClientBinder\Mapping\MapFromAnnotation;
 use HttpClientBinder\Mapping\MappingBuilderInterface;
 use HttpClientBinder\Tests\Base\AbstractAnnotationTestCase;
 use HttpClientBinder\Tests\Base\Client\ClientInterface;
-use ReflectionClass;
+use HttpClientBinder\Tests\Base\Client\Dto\CreateDataRequest;
+use HttpClientBinder\Tests\Base\Client\Dto\CreateDataResponse;
+use HttpClientBinder\Tests\Base\Client\Dto\DataListResponse;
+use HttpClientBinder\Tests\Base\Client\Dto\UpdateDataRequest;
+use HttpClientBinder\Tests\Base\Client\Dto\UpdateDataResponse;
 
 final class MapFromAnnotationTest extends AbstractAnnotationTestCase
 {
-    /**
-     * @test
-     */
-    public function build(): void
+    public function test_build(): void
     {
         $builder = $this->createBuilder();
 
@@ -48,13 +43,11 @@ final class MapFromAnnotationTest extends AbstractAnnotationTestCase
      */
     private function createBuilder(): MappingBuilderInterface
     {
-        $reader = new AnnotationReader();
-
         return
             new MapFromAnnotation(
-                new UrlParametersExtractor($reader),
-                new HeadersExtractor($reader),
-                new RequestTypeExtractor($reader)
+                new UrlParametersExtractor(),
+                new HeadersExtractor(),
+                new RequestTypeExtractor()
             );
     }
 
@@ -86,20 +79,21 @@ final class MapFromAnnotationTest extends AbstractAnnotationTestCase
                         'PUT',
                         UpdateDataResponse::class,
                         new Url('/api/v1/data/{dataId}', new UrlParameterBag([
-                            new UrlParameter('id', 0, UrlParameter::TYPE_PATH, 'dataId')
+                            new UrlParameter('id', 0, UrlParameter::TYPE_PATH, 'dataId'),
                         ])),
                         new HttpHeaderBag([
                             new HttpHeader('Content-type', ['application/json']),
                             new HttpHeader('X-Request-Id', ['update-data-{dataId}'], [
-                                new HttpHeaderParameter('id', 0, 'dataId')
+                                new HttpHeaderParameter('id', 0, 'dataId'),
                             ]),
                         ]),
                         new RequestType('data', 1, UpdateDataRequest::class)
                     ),
                 ]),
                 new HttpHeaderBag([
-                    new HttpHeader("User-Agent", ["Some-User-Agent/v1.0.5"])
-                ])
+                    new HttpHeader("User-Agent", ["Some-User-Agent/v1.0.5"]),
+                ]),
+                'http://wiremock:8080'
             );
     }
 }

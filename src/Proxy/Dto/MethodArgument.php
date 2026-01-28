@@ -4,22 +4,12 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Proxy\Dto;
 
-final class MethodArgument
+final readonly class MethodArgument
 {
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var string
-     */
-    private $type;
-
-    public function __construct(string $name, string $type)
-    {
-        $this->name = $name;
-        $this->type = $type;
+    public function __construct(
+        private string $name,
+        private string $type
+    ) {
     }
 
     public function getName(): string

@@ -7,24 +7,12 @@ namespace HttpClientBinder\Protocol;
 use HttpClientBinder\Mapping\Dto\MappingClient;
 use HttpClientBinder\Mapping\Dto\Endpoint;
 
-final class MagicProtocol implements MagicProtocolInterface
+final readonly class MagicProtocol implements MagicProtocolInterface
 {
-    /**
-     * @var MappingClient
-     */
-    private $client;
-
-    /**
-     * @var RemoteCallStorageInterface
-     */
-    private $remoteCallStorage;
-
     public function __construct(
-        MappingClient $client,
-        RemoteCallStorageInterface $remoteCallStorage
+        private MappingClient $client,
+        private RemoteCallStorageInterface $remoteCallStorage
     ) {
-        $this->client = $client;
-        $this->remoteCallStorage = $remoteCallStorage;
     }
 
     /**

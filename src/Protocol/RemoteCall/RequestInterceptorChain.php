@@ -4,16 +4,12 @@ namespace HttpClientBinder\Protocol\RemoteCall;
 
 use Psr\Http\Message\RequestInterface;
 
-final class RequestInterceptorChain implements RequestInterceptorInterface
+final readonly class RequestInterceptorChain implements RequestInterceptorInterface
 {
-    /**
-     * @var RequestInterceptorInterface[]
-     */
-    private $chain;
-
-    public function __construct(array $chain)
-    {
-        $this->chain = $chain;
+    public function __construct(
+        /** @var RequestInterceptorInterface[] */
+        private readonly array $chain
+    ) {
     }
 
     public function intercept(RequestInterface $request): RequestInterface

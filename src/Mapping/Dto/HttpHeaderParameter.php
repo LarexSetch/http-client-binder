@@ -1,40 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HttpClientBinder\Mapping\Dto;
 
 use JMS\Serializer\Annotation as Serializer;
 
-final class HttpHeaderParameter
+final readonly class HttpHeaderParameter
 {
-    /**
-     * @var string
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("name")
-     */
-    private $argument;
+    public function __construct(
+        #[Serializer\Type("string")]
+        #[Serializer\SerializedName("name")]
+        public string $argument,
 
-    /**
-     * @var int
-     *
-     * @Serializer\Type("integer")
-     * @Serializer\SerializedName("argumentIndex")
-     */
-    private $argumentIndex;
+        #[Serializer\Type("integer")]
+        #[Serializer\SerializedName("argumentIndex")]
+        public int $argumentIndex,
 
-    /**
-     * @var string|null
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("alias")
-     */
-    private $alias;
-
-    public function __construct(string $argument, int $argumentIndex, ?string $alias)
-    {
-        $this->argument = $argument;
-        $this->argumentIndex = $argumentIndex;
-        $this->alias = $alias;
+        #[Serializer\Type("string")]
+        #[Serializer\SerializedName("alias")]
+        public ?string $alias
+    ) {
     }
 
     /**

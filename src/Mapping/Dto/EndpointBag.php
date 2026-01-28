@@ -6,23 +6,16 @@ namespace HttpClientBinder\Mapping\Dto;
 
 use JMS\Serializer\Annotation as Serializer;
 
-final class EndpointBag
+final readonly class EndpointBag
 {
     /**
-     * @var Endpoint[]
-     *
-     * @Serializer\Type("array<HttpClientBinder\Mapping\Dto\Endpoint>")
-     * @Serializer\SerializedName("endpoints")
-     */
-    private $endpoints;
-
-    /**
-     * EndpointBag constructor.
      * @param Endpoint[] $endpoints
      */
-    public function __construct(array $endpoints)
-    {
-        $this->endpoints = $endpoints;
+    public function __construct(
+        #[Serializer\Type("array<" . Endpoint::class . ">")]
+        #[Serializer\SerializedName("endpoints")]
+        public array $endpoints
+    ) {
     }
 
     /**

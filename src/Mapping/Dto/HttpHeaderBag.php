@@ -6,19 +6,16 @@ namespace HttpClientBinder\Mapping\Dto;
 
 use JMS\Serializer\Annotation as Serializer;
 
-final class HttpHeaderBag
+final readonly class HttpHeaderBag
 {
     /**
-     * @var HttpHeader[]
-     *
-     * @Serializer\Type("array<HttpClientBinder\Mapping\Dto\HttpHeader>")
-     * @Serializer\SerializedName("headers")
+     * @param HttpHeader[] $headers
      */
-    private $headers;
-
-    public function __construct(array $headers)
-    {
-        $this->headers = $headers;
+    public function __construct(
+        #[Serializer\Type("array<" . HttpHeader::class . ">")]
+        #[Serializer\SerializedName("headers")]
+        public array $headers
+    ) {
     }
 
     /**

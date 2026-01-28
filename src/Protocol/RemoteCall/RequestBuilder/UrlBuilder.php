@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Protocol\RemoteCall\RequestBuilder;
 
+use DomainException;
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use HttpClientBinder\Mapping\Dto\UrlParameter;
 
@@ -56,20 +57,24 @@ final class UrlBuilder implements UrlBuilderInterface
 
     private function checkArgument(UrlParameter $parameter, array $arguments): void
     {
-        if(!key_exists($parameter->getArgumentIndex(), $arguments)) {
-            throw new \DomainException(sprintf(
-                "Cannot find argument on position %s for parameter %s",
-                $parameter->getArgumentIndex(),
-                $parameter->getArgument()
-            ));
+        if (!key_exists($parameter->getArgumentIndex(), $arguments)) {
+            throw new DomainException(
+                sprintf(
+                    "Cannot find argument on position %s for parameter %s",
+                    $parameter->getArgumentIndex(),
+                    $parameter->getArgument()
+                )
+            );
         }
 
-        if(!is_scalar($arguments[$parameter->getArgumentIndex()])) {
-            throw new \DomainException(sprintf(
-                "Argument must be scalar on position %s name %s",
-                $parameter->getArgumentIndex(),
-                $parameter->getArgument()
-            ));
+        if (!is_scalar($arguments[$parameter->getArgumentIndex()])) {
+            throw new DomainException(
+                sprintf(
+                    "Argument must be scalar on position %s name %s",
+                    $parameter->getArgumentIndex(),
+                    $parameter->getArgument()
+                )
+            );
         }
     }
 }

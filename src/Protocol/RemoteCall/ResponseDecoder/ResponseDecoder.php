@@ -9,32 +9,24 @@ use HttpClientBinder\Codec\Type;
 use JMS\Serializer\SerializerInterface;
 use Psr\Http\Message\StreamInterface;
 
-final class ResponseDecoder implements DecoderInterface
+final readonly class ResponseDecoder implements DecoderInterface
 {
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    public function __construct(SerializerInterface $serializer)
-    {
-        $this->serializer = $serializer;
+    public function __construct(
+        private readonly SerializerInterface $serializer
+    ) {
     }
 
-    /**
-     * @return mixed
-     */
-    public function decode(StreamInterface $stream, Type $type)
+    public function decode(StreamInterface $stream, Type $type): mixed
     {
-        if (StreamInterface::class === $type->getClassName()) {
+        if (StreamInterface::class === $type->className) {
             return $stream;
         }
 
         return
             $this->serializer->deserialize(
                 $stream->getContents(),
-                $type->getClassName(),
-                $type->getFormat()
+                $type->className,
+                $type->format
             );
     }
 }

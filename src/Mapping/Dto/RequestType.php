@@ -6,37 +6,21 @@ namespace HttpClientBinder\Mapping\Dto;
 
 use JMS\Serializer\Annotation as Serializer;
 
-final class RequestType
+final readonly class RequestType
 {
-    /**
-     * @var string
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("argument")
-     */
-    private $argument;
+    public function __construct(
+        #[Serializer\Type("string")]
+        #[Serializer\SerializedName("argument")]
+        public string $argument,
 
-    /**
-     * @var int
-     *
-     * @Serializer\Type("integer")
-     * @Serializer\SerializedName("index")
-     */
-    private $index;
+        #[Serializer\Type("integer")]
+        #[Serializer\SerializedName("index")]
+        public int $index,
 
-    /**
-     * @var string
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("type")
-     */
-    private $type;
-
-    public function __construct(string $argument, int $index, string $type)
-    {
-        $this->argument = $argument;
-        $this->index = $index;
-        $this->type = $type;
+        #[Serializer\Type("string")]
+        #[Serializer\SerializedName("type")]
+        public string $type
+    ) {
     }
 
     public function getArgument(): string

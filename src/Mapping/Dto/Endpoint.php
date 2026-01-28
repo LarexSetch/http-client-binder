@@ -6,70 +6,33 @@ namespace HttpClientBinder\Mapping\Dto;
 
 use JMS\Serializer\Annotation as Serializer;
 
-final class Endpoint
+final readonly class Endpoint
 {
-    /**
-     * @var string
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("name")
-     */
-    private $name;
-
-    /**
-     * @var string
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("method")
-     */
-    private $method;
-
-    /**
-     * @var Url
-     *
-     * @Serializer\Type("HttpClientBinder\Mapping\Dto\Url")
-     * @Serializer\SerializedName("url")
-     */
-    private $url;
-
-    /**
-     * @var HttpHeaderBag
-     *
-     * @Serializer\Type("HttpClientBinder\Mapping\Dto\HttpHeaderBag")
-     * @Serializer\SerializedName("headerBag")
-     */
-    private $headerBag;
-
-    /**
-     * @var RequestType|null
-     *
-     * @Serializer\Type("HttpClientBinder\Mapping\Dto\RequestType")
-     * @Serializer\SerializedName("requestType")
-     */
-    private $requestType;
-
-    /**
-     * @var string
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("responseType")
-     */
-    private $responseType;
-
     public function __construct(
-        string $name,
-        string $method,
-        string $responseType,
-        Url $url,
-        HttpHeaderBag $headerBag,
-        ?RequestType $requestType
+        #[Serializer\Type("string")]
+        #[Serializer\SerializedName("name")]
+        public string $name,
+
+        #[Serializer\Type("string")]
+        #[Serializer\SerializedName("method")]
+        public string $method,
+
+        #[Serializer\Type("string")]
+        #[Serializer\SerializedName("responseType")]
+        public string $responseType,
+
+        #[Serializer\Type(Url::class)]
+        #[Serializer\SerializedName("url")]
+        public Url $url,
+
+        #[Serializer\Type(HttpHeaderBag::class)]
+        #[Serializer\SerializedName("headerBag")]
+        public HttpHeaderBag $headerBag,
+
+        #[Serializer\Type(RequestType::class)]
+        #[Serializer\SerializedName("requestType")]
+        public ?RequestType $requestType = null
     ) {
-        $this->name = $name;
-        $this->method = $method;
-        $this->url = $url;
-        $this->headerBag = $headerBag;
-        $this->requestType = $requestType;
-        $this->responseType = $responseType;
     }
 
     public function getName(): string

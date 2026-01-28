@@ -1,12 +1,11 @@
-version: '3'
 services:
     php:
         build: ./etc/docker/php/
         volumes:
-            - ./:/usr/myapp
-        command: 'sleep 1000000'
+            - ./:/opt/project
         depends_on:
-            - wiremock
+            wiremock:
+              condition: service_healthy
 
     wiremock:
         image: rodolpheche/wiremock
@@ -15,3 +14,8 @@ services:
         volumes:
             - ./etc/wiremock/files:/home/wiremock/__files
             - ./etc/wiremock/mappings:/home/wiremock/mappings
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/data", "-H", "User-Agent: Some-User-Agent/v1.0.5"]
+            interval: 5s
+            timeout: 5s
+            retries: 20

@@ -6,43 +6,13 @@ namespace HttpClientBinder\Proxy;
 
 final class ProxyFactoryRenderDecorator implements ProxyFactoryInterface
 {
-    /**
-     * @var ProxyClassNameResolverInterface
-     */
-    private $classNameResolver;
-
-    /**
-     * @var ProxyFactoryInterface
-     */
-    private $inner;
-
-    /**
-     * @var SourceRenderInterface
-     */
-    private $sourceRender;
-
-    /**
-     * @var SourceStorageInterface
-     */
-    private $sourceStorage;
-
-    /**
-     * @var RenderDataFactoryInterface
-     */
-    private $renderDataFactory;
-
     public function __construct(
-        ProxyClassNameResolverInterface $classNameResolver,
-        SourceRenderInterface $sourceRender,
-        SourceStorageInterface $sourceStorage,
-        RenderDataFactoryInterface $renderDataFactory,
-        ProxyFactoryInterface $inner
+        private readonly ProxyClassNameResolverInterface $classNameResolver,
+        private readonly SourceRenderInterface $sourceRender,
+        private readonly SourceStorageInterface $sourceStorage,
+        private readonly RenderDataFactoryInterface $renderDataFactory,
+        private readonly ProxyFactoryInterface $inner
     ) {
-        $this->classNameResolver = $classNameResolver;
-        $this->inner = $inner;
-        $this->sourceRender = $sourceRender;
-        $this->sourceStorage = $sourceStorage;
-        $this->renderDataFactory = $renderDataFactory;
     }
 
     public function build(string $interfaceName)

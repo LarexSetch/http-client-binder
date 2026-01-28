@@ -6,37 +6,23 @@ namespace HttpClientBinder\Protocol\RemoteCall\RequestBuilder;
 
 use HttpClientBinder\Codec\EncoderInterface;
 use HttpClientBinder\Codec\TypeBuilderInterface;
+use HttpClientBinder\Codec\UnexpectedFormatException;
 use HttpClientBinder\Mapping\Dto\Endpoint;
 use Psr\Http\Message\StreamInterface;
 
-final class BodyResolver implements BodyResolverInterface
+final readonly class BodyResolver implements BodyResolverInterface
 {
-
-    /**
-     * @var StreamBuilderInterface
-     */
-    private $streamBuilder;
-
-    /**
-     * @var EncoderInterface
-     */
-    private $encoder;
-
-    /**
-     * @var TypeBuilderInterface
-     */
-    private $typeBuilder;
-
     public function __construct(
-        StreamBuilderInterface $streamBuilder,
-        EncoderInterface $encoder,
-        TypeBuilderInterface $typeBuilderFactory
+        private readonly StreamBuilderInterface $streamBuilder,
+        private readonly EncoderInterface $encoder,
+        private readonly TypeBuilderInterface $typeBuilder
     ) {
-        $this->streamBuilder = $streamBuilder;
-        $this->encoder = $encoder;
-        $this->typeBuilder = $typeBuilderFactory;
     }
 
+    /**
+     * @throws UnexpectedFormatException
+     * @throws CannotResolveBodyException
+     */
     public function resolve(Endpoint $endpoint, array $arguments): ?StreamInterface
     {
         if (

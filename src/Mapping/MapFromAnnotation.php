@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Mapping;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\Reader;
 use DomainException;
 use HttpClientBinder\Annotation\Client;
 use HttpClientBinder\Annotation\Header;
 use HttpClientBinder\Annotation\RequestMapping;
+use HttpClientBinder\Mapping\Dto\Endpoint;
+use HttpClientBinder\Mapping\Dto\EndpointBag;
 use HttpClientBinder\Mapping\Dto\HttpHeader;
 use HttpClientBinder\Mapping\Dto\HttpHeaderBag;
 use HttpClientBinder\Mapping\Dto\MappingClient;
-use HttpClientBinder\Mapping\Dto\Endpoint;
-use HttpClientBinder\Mapping\Dto\EndpointBag;
 use HttpClientBinder\Mapping\Dto\Url;
 use HttpClientBinder\Mapping\Extractor\HeadersExtractorInterface;
 use HttpClientBinder\Mapping\Extractor\RequestTypeExtractorInterface;
@@ -22,72 +20,49 @@ use HttpClientBinder\Mapping\Extractor\UrlParametersExtractorInterface;
 use ReflectionClass;
 use ReflectionMethod;
 
-final class MapFromAnnotation implements MappingBuilderInterface
+readonly final class MapFromAnnotation implements MappingBuilderInterface
 {
-    /**
-     * @var ReflectionClass
-     */
-    private $reflectionClass;
-
-    /**
-     * @var Reader
-     */
-    private $annotationReader;
-
-    /**
-     * @var UrlParametersExtractorInterface
-     */
-    private $urlParametersExtractor;
-
-    /**
-     * @var HeadersExtractorInterface
-     */
-    private $headersExtractor;
-
-    /**
-     * @var RequestTypeExtractorInterface
-     */
-    private $requestTypeExtractor;
-
     public function __construct(
-        UrlParametersExtractorInterface $urlParametersExtractor,
-        HeadersExtractorInterface $headersExtractor,
-        RequestTypeExtractorInterface $requestTypeExtractor
+        private UrlParametersExtractorInterface $urlParametersExtractor,
+        private HeadersExtractorInterface $headersExtractor,
+        private RequestTypeExtractorInterface $requestTypeExtractor
     ) {
-        $this->urlParametersExtractor = $urlParametersExtractor;
-        $this->headersExtractor = $headersExtractor;
-        $this->requestTypeExtractor = $requestTypeExtractor;
     }
 
     public function build(string $interfaceName): MappingClient
     {
-        $this->reflectionClass = new ReflectionClass($interfaceName);
-        $this->annotationReader = new AnnotationReader();
-        $client = $this->getClientAnnotation();
-        $endpoints = array_map([$this, 'createEndpoint'], $this->reflectionClass->getMethods());
+        $reflectionClass = new ReflectionClass($interfaceName);
+        $client = $this->getClientAnnotation($reflectionClass);
+        $endpoints = array_map([$this, 'createEndpoint'], $reflectionClass->getMethods());
 
         return
             new MappingClient(
                 new EndpointBag($endpoints),
-                new HttpHeaderBag(array_map(
-                    function (Header $header) {
-                        return new HttpHeader($header->getHeader(), $header->getValues());
-                    },
-                    $client->getHeaders()
-                )),
-                $client->getBaseUrl()
+                new HttpHeaderBag(
+                    array_map(
+                        function (Header $header) {
+                            return new HttpHeader($header->header, $header->getValues());
+                        },
+                        $client->headers
+                    )
+                ),
+                $client->baseUrl
             );
     }
 
-    private function getClientAnnotation(): Client
+    private function getClientAnnotation(ReflectionClass $reflectionClass): Client
     {
-        /** @var Client $clientAnnotation */
-        $clientAnnotation = $this->annotationReader->getClassAnnotation($this->reflectionClass, Client::class);
-        if (null === $clientAnnotation) {
-            throw new DomainException("You must define the Client annotation");
+        $reflectionAttribute = $reflectionClass->getAttributes(Client::class)[0] ?? null;
+        if (null === $reflectionAttribute) {
+            throw new DomainException(
+                sprintf('You must define the #[%s] in %s', Client::class, $reflectionClass->getName())
+            );
         }
 
-        return $clientAnnotation;
+        /** @var Client $client */
+        $client = $reflectionAttribute->newInstance();
+
+        return $client;
     }
 
     private function createEndpoint(ReflectionMethod $method): Endpoint
@@ -95,7 +70,7 @@ final class MapFromAnnotation implements MappingBuilderInterface
         return
             new Endpoint(
                 $method->getName(),
-                $this->getRequestMapping($method)->getMethod(),
+                $this->getRequestMapping($method)->method,
                 $this->getResponseType($method),
                 $this->getUrl($method),
                 $this->headersExtractor->extract($method),
@@ -107,17 +82,24 @@ final class MapFromAnnotation implements MappingBuilderInterface
     {
         return
             new Url(
-                $this->getRequestMapping($method)->getUri(),
+                $this->getRequestMapping($method)->uri,
                 $this->urlParametersExtractor->extract($method)
             );
     }
 
-    private function getRequestMapping(ReflectionMethod $method): RequestMapping
+    private function getRequestMapping(ReflectionMethod $reflectionMethod): RequestMapping
     {
-        /** @var RequestMapping $requestMapping */
-        $requestMapping = $this->annotationReader->getMethodAnnotation($method, RequestMapping::class);
+        $reflectionAttribute = $reflectionMethod->getAttributes(RequestMapping::class)[0] ?? null;
+        if (null === $reflectionAttribute) {
+            throw new DomainException(
+                sprintf('You must define the #[%s] in %s', RequestMapping::class, $reflectionMethod->getNamespaceName())
+            );
+        }
 
-        return $requestMapping;
+        /** @var RequestMapping $mapping */
+        $mapping = $reflectionAttribute->newInstance();
+
+        return $mapping;
     }
 
     private function getResponseType(ReflectionMethod $method): string

@@ -2,36 +2,26 @@
 
 namespace HttpClientBinder\Mapping\Extractor;
 
-use Doctrine\Common\Annotations\Reader;
+use DomainException;
 use HttpClientBinder\Annotation\Header;
 use HttpClientBinder\Annotation\HeaderBag;
 use HttpClientBinder\Annotation\Parameter;
-use HttpClientBinder\Annotation\ParameterBag;
+use HttpClientBinder\Annotation\ParameterType;
 use HttpClientBinder\Annotation\RequestMapping;
 use HttpClientBinder\Mapping\Dto\HttpHeader;
 use HttpClientBinder\Mapping\Dto\HttpHeaderBag;
 use HttpClientBinder\Mapping\Dto\HttpHeaderParameter;
+use ReflectionAttribute;
 use ReflectionMethod;
-use DomainException;
 
 final class HeadersExtractor implements HeadersExtractorInterface
 {
-    /**
-     * @var Reader
-     */
-    private $annotationReader;
-
-    public function __construct(Reader $annotationReader)
-    {
-        $this->annotationReader = $annotationReader;
-    }
-
     public function extract(ReflectionMethod $method): HttpHeaderBag
     {
         /** @var HeaderBag $headerBag */
         $headers = $this->initHeaders($method);
-        $headerBag = $this->annotationReader->getMethodAnnotation($method, HeaderBag::class);
-        if (null === $headerBag) {
+        $reflectionAttributes = $method->getAttributes(Header::class);
+        if (empty($reflectionAttributes)) {
             return new HttpHeaderBag($headers);
         }
 
@@ -42,7 +32,7 @@ final class HeadersExtractor implements HeadersExtractorInterface
                     function (Header $header) use ($method) {
                         return $this->createHttpHeader($header, $method);
                     },
-                    $headerBag->getHeaders()
+                    array_map(fn(ReflectionAttribute $attribute) => $attribute->newInstance(), $reflectionAttributes)
                 )
             );
 
@@ -55,63 +45,71 @@ final class HeadersExtractor implements HeadersExtractorInterface
     private function initHeaders(ReflectionMethod $method): array
     {
         $requestMapping = $this->getRequestMapping($method);
-        if (null !== $requestMapping->getRequestType()) {
-            return [new HttpHeader('Content-type', [$requestMapping->getRequestType()])];
+        if (null !== $requestMapping->requestType) {
+            return [new HttpHeader('Content-type', [$requestMapping->requestType])];
         } else {
             return [];
         }
     }
 
-    private function getRequestMapping(ReflectionMethod $method): RequestMapping
+    private function getRequestMapping(ReflectionMethod $method): ?RequestMapping
     {
+        $reflectionAttribute = $method->getAttributes(RequestMapping::class)[0] ?? null;
+        if (null === $reflectionAttribute) {
+            return null;
+        }
+
         /** @var RequestMapping $requestMapping */
-        $requestMapping = $this->annotationReader->getMethodAnnotation($method, RequestMapping::class);
+        $requestMapping = $reflectionAttribute->newInstance();
 
         return $requestMapping;
     }
 
     private function createHttpHeader(Header $header, ReflectionMethod $method): HttpHeader
     {
-        /** @var ParameterBag $parameterBag */
-        $parameterBag = $this->annotationReader->getMethodAnnotation($method, ParameterBag::class);
+        $reflectionAttributes = $method->getAttributes(Parameter::class);
         $headerParameters = array_map(
             function (Parameter $parameter) use ($method) {
                 return $this->createHeaderParameter($parameter, $method);
             },
-            array_filter(
-                $parameterBag->getParameters(),
-                function (Parameter $parameter) {
-                    return in_array(Parameter::TYPE_HEADER, $parameter->getTypes());
-                }
+            array_values(
+                array_filter(
+                    array_map(fn(ReflectionAttribute $attribute) => $attribute->newInstance(), $reflectionAttributes),
+                    function (Parameter $parameter) {
+                        return $parameter->type === ParameterType::HEADER;
+                    }
+                )
             )
         );
 
-        return new HttpHeader($header->getHeader(), $header->getValues(), $headerParameters);
+        return new HttpHeader($header->header, $header->getValues(), $headerParameters);
     }
 
     private function createHeaderParameter(Parameter $parameter, ReflectionMethod $method): HttpHeaderParameter
     {
         return
             new HttpHeaderParameter(
-                $parameter->getArgumentName(),
+                $parameter->argumentName,
                 $this->getArgumentIndex($parameter, $method),
-                $parameter->getAlias()
+                $parameter->alias
             );
     }
 
     private function getArgumentIndex(Parameter $parameter, ReflectionMethod $method): int
     {
         foreach ($method->getParameters() as $methodParameter) {
-            if ($methodParameter->getName() === $parameter->getArgumentName()) {
+            if ($methodParameter->getName() === $parameter->argumentName) {
                 return $methodParameter->getPosition();
             }
         }
 
-        throw new DomainException(sprintf(
-            'Unexpected parameter %s in method %s with type %s',
-            $parameter->getArgumentName(),
-            $method->getName(),
-            Parameter::TYPE_HEADER
-        ));
+        throw new DomainException(
+            sprintf(
+                'Unexpected parameter %s in method %s with type %s',
+                $parameter->argumentName,
+                $method->getName(),
+                ParameterType::HEADER->value
+            )
+        );
     }
 }

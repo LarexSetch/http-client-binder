@@ -10,24 +10,17 @@ use HttpClientBinder\Mapping\Dto\HttpHeader;
 use HttpClientBinder\Mapping\Dto\HttpHeaderParameter;
 use Psr\Http\Message\RequestInterface;
 
-final class GuzzleRequestBuilder implements RequestBuilderInterface
+final readonly class GuzzleRequestBuilder implements RequestBuilderInterface
 {
-    /**
-     * @var UrlBuilderInterface
-     */
-    private $urlBuilder;
-
-    /**
-     * @var BodyResolverInterface
-     */
-    private $bodyResolver;
-
-    public function __construct(UrlBuilderInterface $urlBuilder, BodyResolverInterface $bodyResolver)
-    {
-        $this->urlBuilder = $urlBuilder;
-        $this->bodyResolver = $bodyResolver;
+    public function __construct(
+        private readonly UrlBuilderInterface $urlBuilder,
+        private readonly BodyResolverInterface $bodyResolver
+    ) {
     }
 
+    /**
+     * @throws CannotResolveBodyException
+     */
     public function build(Endpoint $endpoint, array $arguments): RequestInterface
     {
         return
@@ -74,19 +67,23 @@ final class GuzzleRequestBuilder implements RequestBuilderInterface
     private function checkArgument(HttpHeaderParameter $parameter, array $arguments): void
     {
         if (!key_exists($parameter->getArgumentIndex(), $arguments)) {
-            throw new \DomainException(sprintf(
-                "Cannot find argument on position %s for parameter %s",
-                $parameter->getArgumentIndex(),
-                $parameter->getArgument()
-            ));
+            throw new \DomainException(
+                sprintf(
+                    "Cannot find argument on position %s for parameter %s",
+                    $parameter->getArgumentIndex(),
+                    $parameter->getArgument()
+                )
+            );
         }
 
         if (!is_scalar($arguments[$parameter->getArgumentIndex()])) {
-            throw new \DomainException(sprintf(
-                "Argument must be scalar on position %s name %s",
-                $parameter->getArgumentIndex(),
-                $parameter->getArgument()
-            ));
+            throw new \DomainException(
+                sprintf(
+                    "Argument must be scalar on position %s name %s",
+                    $parameter->getArgumentIndex(),
+                    $parameter->getArgument()
+                )
+            );
         }
     }
 }

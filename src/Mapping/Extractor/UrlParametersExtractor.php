@@ -2,31 +2,22 @@
 
 namespace HttpClientBinder\Mapping\Extractor;
 
-use Doctrine\Common\Annotations\Reader;
+use DomainException;
 use HttpClientBinder\Annotation\Parameter;
-use HttpClientBinder\Annotation\ParameterBag;
+use HttpClientBinder\Annotation\ParameterType;
 use HttpClientBinder\Mapping\Dto\UrlParameter;
 use HttpClientBinder\Mapping\Dto\UrlParameterBag;
+use ReflectionAttribute;
 use ReflectionMethod;
-use Exception;
-use DomainException;
 
 final class UrlParametersExtractor implements UrlParametersExtractorInterface
 {
-    /**
-     * @var Reader
-     */
-    private $annotationReader;
-
-    public function __construct(Reader $annotationReader)
-    {
-        $this->annotationReader = $annotationReader;
-    }
+    private const DEFAULT_PARAMETERS_TYPE = [ParameterType::QUERY, ParameterType::PATH];
 
     public function extract(ReflectionMethod $method): UrlParameterBag
     {
-        $parameterBag = $this->annotationReader->getMethodAnnotation($method, ParameterBag::class);
-        if (null === $parameterBag) {
+        $parameters = $method->getAttributes(Parameter::class);
+        if (empty($parameters)) {
             return new UrlParameterBag([]);
         }
 
@@ -34,22 +25,20 @@ final class UrlParametersExtractor implements UrlParametersExtractorInterface
             new UrlParameterBag(
                 array_values(
                     array_map(
-                        function (Parameter $parameter) use ($method) {
-                            return
-                                new UrlParameter(
-                                    $parameter->getArgumentName(),
-                                    $this->resolveArgumentIndex($method, $parameter),
-                                    $this->resolveType($parameter),
-                                    $parameter->getAlias()
-                                );
-                        },
-                        array_filter(
-                            $parameterBag->getParameters(),
-                            function (Parameter $parameter) {
-                                return
-                                    in_array(Parameter::TYPE_PATH, $parameter->getTypes()) ||
-                                    in_array(Parameter::TYPE_QUERY, $parameter->getTypes());
-                            }
+                        fn(Parameter $parameter) => new UrlParameter(
+                            $parameter->argumentName,
+                            $this->resolveArgumentIndex($method, $parameter),
+                            $this->resolveType($parameter),
+                            $parameter->alias
+                        ),
+                        array_values(
+                            array_filter(
+                                array_map(
+                                    fn(ReflectionAttribute $attribute) => $attribute->newInstance(),
+                                    $parameters
+                                ),
+                                fn(Parameter $parameter) => in_array($parameter->type, self::DEFAULT_PARAMETERS_TYPE)
+                            )
                         )
                     )
                 )
@@ -58,28 +47,33 @@ final class UrlParametersExtractor implements UrlParametersExtractorInterface
 
     private function resolveType(Parameter $parameter): string
     {
-        switch (true) {
-            case in_array(Parameter::TYPE_QUERY, $parameter->getTypes()):
-                return UrlParameter::TYPE_QUERY;
-            case in_array(Parameter::TYPE_PATH, $parameter->getTypes()):
-                return UrlParameter::TYPE_PATH;
-            default:
-                throw new Exception('Unavailable parameter');
-        }
+        return match ($parameter->type) {
+            ParameterType::QUERY => UrlParameter::TYPE_QUERY,
+            ParameterType::PATH => UrlParameter::TYPE_PATH,
+            default => throw new DomainException(
+                sprintf(
+                    'Unavailable parameter type %s supported [%s]',
+                    $parameter->type->value,
+                    implode(',', self::DEFAULT_PARAMETERS_TYPE)
+                )
+            ),
+        };
     }
 
     private function resolveArgumentIndex(ReflectionMethod $method, Parameter $parameter): int
     {
         foreach ($method->getParameters() as $methodParameter) {
-            if ($methodParameter->getName() === $parameter->getArgumentName()) {
+            if ($methodParameter->getName() === $parameter->argumentName) {
                 return $methodParameter->getPosition();
             }
         }
 
-        throw new DomainException(sprintf(
-            'Unexpected parameter %s in method %s',
-            $parameter->getArgumentName(),
-            $method->getName()
-        ));
+        throw new DomainException(
+            sprintf(
+                'Unexpected parameter %s in method %s',
+                $parameter->argumentName,
+                $method->getName()
+            )
+        );
     }
 }

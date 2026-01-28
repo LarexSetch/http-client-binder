@@ -9,36 +9,23 @@ use HttpClientBinder\Codec\Type;
 use JMS\Serializer\SerializerInterface;
 use Psr\Http\Message\StreamInterface;
 
-final class BodyEncoder implements EncoderInterface
+final readonly class BodyEncoder implements EncoderInterface
 {
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
-    /**
-     * @var StreamBuilderInterface
-     */
-    private $streamBuilder;
-
-    public function __construct(SerializerInterface $serializer, StreamBuilderInterface $streamBuilder)
-    {
-        $this->serializer = $serializer;
-        $this->streamBuilder = $streamBuilder;
+    public function __construct(
+        private SerializerInterface $serializer,
+        private StreamBuilderInterface $streamBuilder
+    ) {
     }
 
-    /**
-     * @param mixed $object
-     */
-    public function encode($object, Type $type): StreamInterface
+    public function encode(mixed $object, Type $type): StreamInterface
     {
         return
             $this->streamBuilder->build(
                 $this->serializer->serialize(
                     $object,
-                    $type->getFormat(),
+                    $type->format,
                     null,
-                    $type->getClassName()
+                    $type->className
                 )
             );
     }

@@ -6,37 +6,25 @@ namespace HttpClientBinder\Mapping\Dto;
 
 use JMS\Serializer\Annotation as Serializer;
 
-final class HttpHeader
+final readonly class HttpHeader
 {
     /**
-     * @var string
-     *
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("name")
+     * @param string[] $value
+     * @param HttpHeaderParameter[] $parameters
      */
-    private $name;
+    public function __construct(
+        #[Serializer\Type("string")]
+        #[Serializer\SerializedName("name")]
+        public string $name,
 
-    /**
-     * @var string[]
-     *
-     * @Serializer\Type("array<string>")
-     * @Serializer\SerializedName("value")
-     */
-    private $value;
+        #[Serializer\Type("array<string>")]
+        #[Serializer\SerializedName("value")]
+        public array $value,
 
-    /**
-     * @var HttpHeaderParameter[]
-     *
-     * @Serializer\Type("array<HttpClientBinder\Mapping\Dto\HttpHeaderParameter>")
-     * @Serializer\SerializedName("parameters")
-     */
-    private $parameters = [];
-
-    public function __construct(string $name, array $value, array $parameters = [])
-    {
-        $this->name = $name;
-        $this->value = $value;
-        $this->parameters = $parameters;
+        #[Serializer\Type("array<" . HttpHeaderParameter::class . ">")]
+        #[Serializer\SerializedName("parameters")]
+        public array $parameters = []
+    ) {
     }
 
     public function getName(): string
@@ -61,12 +49,10 @@ final class HttpHeader
     }
 
     /**
-     * @return static
+     * @return self
      */
-    public function setParameters(array $parameters): HttpHeader
+    public function withParameters(array $parameters): self
     {
-        $this->parameters = $parameters;
-
-        return $this;
+        return new self($this->name, $this->value, $parameters);
     }
 }

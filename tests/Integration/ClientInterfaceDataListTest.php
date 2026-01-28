@@ -4,24 +4,19 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Tests\Integration;
 
-use HttpClientBinder\Tests\Base\Client\Dto\DataElement;
-use HttpClientBinder\Tests\Base\Client\Dto\DataListResponse;
 use HttpClientBinder\Fabrics\BinderBuilder;
 use HttpClientBinder\Tests\Base\AbstractAnnotationTestCase;
 use HttpClientBinder\Tests\Base\Client\ClientInterface;
+use HttpClientBinder\Tests\Base\Client\Dto\DataElement;
+use HttpClientBinder\Tests\Base\Client\Dto\DataListResponse;
 
 final class ClientInterfaceDataListTest extends AbstractAnnotationTestCase
 {
-    /**
-     * @test
-     */
-    public function getList(): void
+    public function test_get_list(): void
     {
         /** @var ClientInterface $client */
-        $client = BinderBuilder::builder()
-            ->target(ClientInterface::class, WIREMOCK_HOST)
-            ->getClient()
-        ;
+        $client = BinderBuilder::builder(ClientInterface::class, WIREMOCK_HOST)
+            ->getClient();
 
         $dataList = $client->getDataList();
 
@@ -32,15 +27,10 @@ final class ClientInterfaceDataListTest extends AbstractAnnotationTestCase
     private function createExpectedListResponse(): DataListResponse
     {
         return
-            (new DataListResponse())
-                ->setElements([
-                    (new DataElement())
-                        ->setId(1)
-                        ->setPropertyOne('one')
-                        ->setPropertyTwo('two')
-                ])
-                ->setElementsCount(200)
-                ->setElementsOnPage(1)
-            ;
+            (new DataListResponse(
+                [(new DataElement(1, 'one', 'two'))],
+                200,
+                1
+            ));
     }
 }

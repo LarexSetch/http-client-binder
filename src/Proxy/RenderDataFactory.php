@@ -17,29 +17,11 @@ use ReflectionParameter;
 
 final class RenderDataFactory implements RenderDataFactoryInterface
 {
-    /**
-     * @var ProxyClassNameResolverInterface
-     */
-    private $classNameResolver;
-
-    /**
-     * @var MappingBuilderInterface
-     */
-    private $mappingBuilder;
-
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
     public function __construct(
-        ProxyClassNameResolverInterface $classNameResolver,
-        MappingBuilderInterface $mappingBuilder,
-        SerializerInterface $serializer
+        private readonly ProxyClassNameResolverInterface $classNameResolver,
+        private readonly MappingBuilderInterface $mappingBuilder,
+        private readonly SerializerInterface $serializer
     ) {
-        $this->classNameResolver = $classNameResolver;
-        $this->mappingBuilder = $mappingBuilder;
-        $this->serializer = $serializer;
     }
 
     public function build(string $interfaceName): RenderData

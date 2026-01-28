@@ -4,32 +4,15 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Annotation;
 
-use Doctrine\Common\Annotations\Annotation;
-use Doctrine\Common\Annotations\Annotation\Target;
-use Doctrine\Common\Annotations\Annotation\Required;
+use Attribute;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
-final class ParameterBag
+#[Attribute(Attribute::TARGET_METHOD)]
+final readonly class ParameterBag
 {
     /**
-     * @var Parameter[]
-     * @Required
+     * @param Parameter[] $parameters
      */
-    private $parameters;
-
-    public function __construct(array $values)
+    public function __construct(public array $parameters)
     {
-        $this->parameters = $values["value"];
-    }
-
-    /**
-     * @return Parameter[]
-     */
-    public function getParameters(): array
-    {
-        return $this->parameters;
     }
 }

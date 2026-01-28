@@ -8,22 +8,10 @@ use HttpClientBinder\Protocol\MagicProtocolFactoryInterface;
 
 final class ProxyFactory implements ProxyFactoryInterface
 {
-    /**
-     * @var ProxyClassNameResolverInterface
-     */
-    private $classNameResolver;
-
-    /**
-     * @var MagicProtocolFactoryInterface
-     */
-    private $magicProtocolFactory;
-
     public function __construct(
-        ProxyClassNameResolverInterface $classNameResolver,
-        MagicProtocolFactoryInterface $magicProtocolFactory
+        private readonly ProxyClassNameResolverInterface $classNameResolver,
+        private readonly MagicProtocolFactoryInterface $magicProtocolFactory
     ) {
-        $this->classNameResolver = $classNameResolver;
-        $this->magicProtocolFactory = $magicProtocolFactory;
     }
 
     public function build(string $interfaceName)
