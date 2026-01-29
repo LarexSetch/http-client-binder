@@ -4,51 +4,45 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Fabrics;
 
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\ClientInterface;
 use HttpClientBinder\Codec\DecoderInterface;
 use HttpClientBinder\Codec\EncoderInterface;
-use HttpClientBinder\Fabrics\Protocol\MagicProtocolFactory;
-use HttpClientBinder\Mapping\Extractor\HeadersExtractor;
-use HttpClientBinder\Mapping\Extractor\RequestTypeExtractor;
-use HttpClientBinder\Mapping\Extractor\UrlParametersExtractor;
-use HttpClientBinder\Mapping\MapFromAnnotation;
-use HttpClientBinder\Protocol\MagicProtocolFactoryInterface;
-use HttpClientBinder\Protocol\RemoteCall\RequestBuilder\BodyEncoder;
-use HttpClientBinder\Protocol\RemoteCall\RequestBuilder\StreamBuilder;
+use HttpClientBinder\Codec\Type;
+use HttpClientBinder\Metadata\Dto\ClientMetadata;
+use HttpClientBinder\Metadata\ReflectionClientMetadataFactory;
+use HttpClientBinder\Protocol\RemoteCall\GuzzleRemoteCall;
 use HttpClientBinder\Protocol\RemoteCall\RequestInterceptorChain;
 use HttpClientBinder\Protocol\RemoteCall\RequestInterceptorInterface;
-use HttpClientBinder\Protocol\RemoteCall\ResponseDecoder\ResponseDecoder;
-use HttpClientBinder\Proxy\ProxyClassNameResolverInterface;
 use HttpClientBinder\Proxy\ProxyFactory;
-use HttpClientBinder\Proxy\ProxyFactoryRenderDecorator;
 use HttpClientBinder\Proxy\ProxySourceRender;
-use HttpClientBinder\Proxy\ProxySourceStorage;
-use HttpClientBinder\Proxy\RenderDataFactory;
+use HttpClientBinder\Utils\StringToStream;
 use JMS\Serializer\SerializerBuilder;
 use JMS\Serializer\SerializerInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * @template T
  */
 final class BinderBuilder
 {
-    private ProxyClassNameResolverInterface $classNameResolver;
-
     private EncoderInterface $encoder;
 
     private DecoderInterface $decoder;
 
-    private RequestInterceptorInterface $requestInterceptor;
-
-    private SerializerInterface $serializer;
+    /**
+     * @var array<RequestInterceptorInterface>
+     */
+    private array $requestInterceptors = [];
 
     private string $tmpDir;
 
     /**
      * @param class-string<T> $className
      */
-    public static function builder(string $className, ?string $baseUrl = null): BinderBuilder
+    public static function builder(string $className, string $baseUrl): BinderBuilder
     {
-        return new self($className, $baseUrl);
+        return new self(new ReflectionClientMetadataFactory(), $className, $baseUrl);
     }
 
     public function encoder(EncoderInterface $encoder): BinderBuilder
@@ -65,19 +59,9 @@ final class BinderBuilder
         return $this;
     }
 
-    public function requestInterceptor(RequestInterceptorInterface $interceptor): BinderBuilder
+    public function addRequestInterceptor(RequestInterceptorInterface $interceptor): BinderBuilder
     {
-        $this->requestInterceptor = $interceptor;
-
-        return $this;
-    }
-
-    /**
-     * @param RequestInterceptorInterface[] $interceptors
-     */
-    public function requestInterceptors(array $interceptors): BinderBuilder
-    {
-        $this->requestInterceptor = RequestInterceptorChain::create($interceptors);
+        $this->requestInterceptors[] = $interceptor;
 
         return $this;
     }
@@ -95,86 +79,85 @@ final class BinderBuilder
      */
     public function getClient(): mixed
     {
-        $proxyFactory =
-            new ProxyFactoryRenderDecorator(
-                $this->classNameResolver,
-                new ProxySourceRender(),
-                new ProxySourceStorage($this->tmpDir),
-                new RenderDataFactory(
-                    $this->classNameResolver,
-                    new MapFromAnnotation(
-                        new UrlParametersExtractor(),
-                        new HeadersExtractor(),
-                        new RequestTypeExtractor()
-                    ),
-                    $this->serializer
-                ),
-                new ProxyFactory(
-                    $this->classNameResolver,
-                    $this->getMagicProtocolFactory()
-                )
-            );
+        $metadata = $this->clientMetadataFactory->create($this->className, $this->baseUrl);
+        $httpClient = self::createGuzzleClient($metadata);
+        $remoteCall = new GuzzleRemoteCall($httpClient, RequestInterceptorChain::create($this->requestInterceptors));
+        $proxyFactory = new ProxyFactory(
+            new ProxySourceRender(),
+            $this->encoder,
+            $this->decoder,
+            $this->tmpDir,
+        );
 
-        return $proxyFactory->build($this->className);
+        return $proxyFactory->create($metadata, $remoteCall);
     }
 
     private function __construct(
+        private readonly ReflectionClientMetadataFactory $clientMetadataFactory,
         private readonly string $className,
         /* @param class-string<T> $className */
-        private readonly ?string $baseUrl = null
+        private readonly string $baseUrl
+
     ) {
-        $this->serializer = SerializerBuilder::create()->build();
         $this->encoder = $this->createDefaultEncoder();
         $this->decoder = $this->createDefaultDecoder();
-        $this->classNameResolver = $this->createClassNameResolver();
-        $this->requestInterceptor = RequestInterceptorChain::create();
         $this->tmpDir = "/tmp";
-    }
-
-    private function createClassNameResolver(): ProxyClassNameResolverInterface
-    {
-        return
-            new class implements ProxyClassNameResolverInterface {
-                public function resolve(string $interfaceName): string
-                {
-                    return
-                        sprintf(
-                            "%sProxy",
-                            strtr(
-                                $interfaceName,
-                                [
-                                    "Interface" => "",
-                                    "\\" => "_",
-                                ]
-                            )
-                        );
-                }
-            };
-    }
-
-    private function getMagicProtocolFactory(): MagicProtocolFactoryInterface
-    {
-        return
-            new MagicProtocolFactory(
-                $this->serializer,
-                $this->encoder,
-                $this->decoder,
-                $this->requestInterceptor,
-                $this->baseUrl
-            );
     }
 
     private function createDefaultEncoder(): EncoderInterface
     {
-        return
-            new BodyEncoder(
-                $this->serializer,
-                new StreamBuilder()
-            );
+        return new class implements EncoderInterface {
+            private SerializerInterface $serializer;
+
+            public function __construct()
+            {
+                $this->serializer = SerializerBuilder::create()->build();
+            }
+
+            public function encode(mixed $object, Type $type): StreamInterface
+            {
+                return StringToStream::create($this->serializer->serialize($object, $type->value));
+            }
+        };
     }
 
     private function createDefaultDecoder(): DecoderInterface
     {
-        return new ResponseDecoder($this->serializer);
+        return new class implements DecoderInterface {
+            private SerializerInterface $serializer;
+
+            public function __construct()
+            {
+                $this->serializer = SerializerBuilder::create()->build();
+            }
+
+            public function decode(StreamInterface $stream, string $className, Type $type): mixed
+            {
+                return
+                    $this->serializer->deserialize(
+                        $stream->getContents(),
+                        $className,
+                        $type->value
+                    );
+            }
+        };
+    }
+
+    private static function createGuzzleClient(ClientMetadata $client): ClientInterface
+    {
+        return new GuzzleClient([
+            'base_uri' => $client->baseUrl,
+            'headers' => self::buildHeaders($client),
+        ]);
+    }
+
+    private static function buildHeaders(ClientMetadata $client): ?array
+    {
+        $headers = [];
+        foreach ($client->headers as $header) {
+            $headers[$header->name] = $header->value;
+        }
+
+        return $headers;
     }
 }

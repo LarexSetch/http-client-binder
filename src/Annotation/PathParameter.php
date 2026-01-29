@@ -7,9 +7,9 @@ namespace HttpClientBinder\Annotation;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PARAMETER)]
-readonly class RequestBody
+readonly class PathParameter
 {
-    public function __construct(public string $contentType)
+    public function __construct(public string $name)
     {
     }
 }

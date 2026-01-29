@@ -8,5 +8,5 @@ use Psr\Http\Message\StreamInterface;
 
 interface DecoderInterface
 {
-    public function decode(StreamInterface $stream, Type $type): mixed;
+    public function decode(StreamInterface $stream, string $className, Type $type): mixed;
 }

@@ -13,7 +13,6 @@ final readonly class Client
      * @param Header[] $headers
      */
     public function __construct(
-        public ?string $baseUrl,
         public array $headers = []
     ) {
     }

@@ -16,6 +16,7 @@ final class ClientInterfaceDataUpdateTest extends AbstractAnnotationTestCase
     {
         /** @var ClientInterface $client */
         $client = BinderBuilder::builder(ClientInterface::class, WIREMOCK_HOST)
+            ->temporaryDirectory(TMP_DIR)
             ->getClient();
 
         $dataList = $client->updateData(10030, $this->createRequest());

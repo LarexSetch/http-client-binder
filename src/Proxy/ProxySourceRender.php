@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace HttpClientBinder\Proxy;
 
-use HttpClientBinder\Proxy\Dto\Method;
-use HttpClientBinder\Proxy\Dto\MethodArgument;
-use HttpClientBinder\Proxy\Dto\RenderData;
+use HttpClientBinder\Metadata\Dto\ClientMetadata;
+use HttpClientBinder\Metadata\Dto\Endpoint;
+use HttpClientBinder\Metadata\Dto\EndpointArgument;
+use HttpClientBinder\Proxy\EndpointRenderer;
+use HttpClientBinder\Utils\ClassNameResolver;
 
-final class ProxySourceRender implements SourceRenderInterface
+final class ProxySourceRender
 {
-    public function render(RenderData $renderData): string
+    public function render(ClientMetadata $metadata): string
     {
         return
             strtr(
                 $this->getClassBody(),
                 [
-                    '%CLASS_NAME%' => $renderData->getClassName(),
-                    '%INTERFACE_NAMESPACE%' => $renderData->getInterfaceName(),
-                    '%JSON_MAPPINGS%' => $renderData->getJsonMappings(),
-                    '%METHODS_IMPLEMENTATION%' => $this->renderMethods($renderData)
+                    '%CLASS_NAME%' => ClassNameResolver::resolve($metadata),
+                    '%INTERFACE_NAMESPACE%' => $metadata->name,
+                    '%METHODS_IMPLEMENTATION%' => $this->renderMethods($metadata),
                 ]
             );
     }
@@ -31,18 +32,13 @@ final class ProxySourceRender implements SourceRenderInterface
 
 declare(strict_types=1);
 
-use HttpClientBinder\Protocol\MagicProtocolFactoryInterface;
-use JMS\Serializer\SerializerInterface;
-
 class %CLASS_NAME% implements %INTERFACE_NAMESPACE%
 {
-    /**
-     * @var HttpClientBinder\Protocol\MagicProtocol
-     */
-    private \$protocol;
-
-    public function __construct(MagicProtocolFactoryInterface \$magicProtocolFactory) {
-        \$this->protocol = \$magicProtocolFactory->build('%JSON_MAPPINGS%');
+    public function __construct(
+        private readonly \HttpClientBinder\Protocol\RemoteCall\RemoteCall \$remoteCall,
+        private readonly \HttpClientBinder\Proxy\RequestFactory\RequestFactory \$requestFactory,
+        private readonly \HttpClientBinder\Proxy\ResultFactory\ResultFactory \$resultFactory,
+    ) {
     }
 
 %METHODS_IMPLEMENTATION%
@@ -50,34 +46,44 @@ class %CLASS_NAME% implements %INTERFACE_NAMESPACE%
 END;
     }
 
-    private function renderMethods(RenderData $renderData): string
+    private function renderMethods(ClientMetadata $metadata): string
     {
         return
-            implode("\n\n", array_map(
-                function (Method $method) {
-                    return
-                        strtr(
-                            $this->getMethodBody(),
-                            [
-                                '%METHOD_NAME%' => $method->getName(),
-                                '%RETURN_TYPE%' => $method->getReturnType(),
-                                '%METHOD_ARGUMENTS%' => implode(", ", array_map(
-                                    function (MethodArgument $argument) {
-                                        return sprintf("%s $%s", $argument->getType(), $argument->getName());
-                                    },
-                                    $method->getArguments()
-                                )),
-                                '%PROTOCOL_ARGUMENTS%' => implode(", ", array_map(
-                                    function (MethodArgument $argument) {
-                                        return sprintf("$%s", $argument->getName());
-                                    },
-                                    $method->getArguments()
-                                ))
-                            ]
-                        );
-                },
-                $renderData->getMethods()
-            ));
+            implode(
+                "\n\n",
+                array_map(
+                    function (Endpoint $endpoint) {
+                        return
+                            strtr(
+                                $this->getMethodBody(),
+                                [
+                                    '%METHOD_NAME%' => $endpoint->name,
+                                    '%RETURN_TYPE%' => $endpoint->resultType,
+                                    '%METHOD_ARGUMENTS%' => implode(
+                                        ", ",
+                                        array_map(
+                                            function (EndpointArgument $argument) {
+                                                return sprintf("%s $%s", $argument->type, $argument->name);
+                                            },
+                                            $endpoint->arguments
+                                        )
+                                    ),
+                                    '%PROTOCOL_ARGUMENTS%' => implode(
+                                        ", ",
+                                        array_map(
+                                            function (EndpointArgument $argument) {
+                                                return sprintf("$%s", $argument->name);
+                                            },
+                                            $endpoint->arguments
+                                        )
+                                    ),
+                                    '%ENDPOINT%' => EndpointRenderer::render($endpoint),
+                                ]
+                            );
+                    },
+                    $metadata->endpoints
+                )
+            );
     }
 
     private function getMethodBody(): string
@@ -85,7 +91,11 @@ END;
         return <<<END
     public function %METHOD_NAME%(%METHOD_ARGUMENTS%): %RETURN_TYPE%
     {
-        return \$this->protocol->%METHOD_NAME%(%PROTOCOL_ARGUMENTS%);
+        \$endpoint = %ENDPOINT%;
+        \$request = \$this->requestFactory->create(\$endpoint, func_get_args());
+        \$response = \$this->remoteCall->invoke(\$request);
+
+        return \$this->resultFactory->create(\$endpoint, \$response);
     }
 END;
     }

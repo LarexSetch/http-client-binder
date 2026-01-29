@@ -13,8 +13,8 @@ readonly final class Header
     {
     }
 
-    public function getValues(): array
+    public function getValue(): string
     {
-        return is_string($this->values) ? [$this->values] : $this->values;
+        return implode(',', is_string($this->values) ? [$this->values] : $this->values);
     }
 }
