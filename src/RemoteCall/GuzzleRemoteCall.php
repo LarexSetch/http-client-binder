@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HttpClientBinder\Protocol\RemoteCall;
+namespace HttpClientBinder\RemoteCall;
 
 use Exception;
 use GuzzleHttp\ClientInterface;

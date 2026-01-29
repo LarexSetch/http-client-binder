@@ -1,6 +1,8 @@
 <?php
 
-namespace HttpClientBinder\Protocol\RemoteCall;
+declare(strict_types=1);
+
+namespace HttpClientBinder\RemoteCall;
 
 use Psr\Http\Message\RequestInterface;
 

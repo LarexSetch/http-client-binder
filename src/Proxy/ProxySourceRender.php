@@ -35,7 +35,7 @@ declare(strict_types=1);
 class %CLASS_NAME% implements %INTERFACE_NAMESPACE%
 {
     public function __construct(
-        private readonly \HttpClientBinder\Protocol\RemoteCall\RemoteCall \$remoteCall,
+        private readonly \HttpClientBinder\RemoteCall\RemoteCall \$remoteCall,
         private readonly \HttpClientBinder\Proxy\RequestFactory\RequestFactory \$requestFactory,
         private readonly \HttpClientBinder\Proxy\ResultFactory\ResultFactory \$resultFactory,
     ) {

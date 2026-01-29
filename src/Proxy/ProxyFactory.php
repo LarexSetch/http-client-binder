@@ -7,7 +7,7 @@ namespace HttpClientBinder\Proxy;
 use HttpClientBinder\Codec\DecoderInterface;
 use HttpClientBinder\Codec\EncoderInterface;
 use HttpClientBinder\Metadata\Dto\ClientMetadata;
-use HttpClientBinder\Protocol\RemoteCall\RemoteCall;
+use HttpClientBinder\RemoteCall\RemoteCall;
 use HttpClientBinder\Proxy\RequestFactory\GuzzleRequestFactory;
 use HttpClientBinder\Proxy\ResultFactory\BaseResultFactory;
 use HttpClientBinder\Utils\ClassNameResolver;

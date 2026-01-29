@@ -9,5 +9,4 @@ enum Type: string
     case JSON = 'json';
     case XML = 'xml';
     case TEXT = 'text';
-
 }
