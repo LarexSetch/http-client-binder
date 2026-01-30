@@ -1,6 +1,7 @@
 {
   "name": "larexsetch/http-client-binder",
   "description": "Http client binder is easy way to create http client",
+  "version": "2.0.0",
   "autoload": {
     "psr-4": {
       "HttpClientBinder\\": "src/"
