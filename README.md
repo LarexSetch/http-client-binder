@@ -21,10 +21,9 @@ You can see example here: [HttpClientBinder\Tests\Base\Client\ClientInterface](h
 
 /** @var YourClientInterface $client */
 $client = 
-    \HttpClientBinder\Fabrics\BinderBuilder::builder()
+    \HttpClientBinder\Fabrics\BinderBuilder::builder(YourClientInterface::class, $baseUrl) // $baseUrl may be declare by annotation @Client(baseUrl="http://example.com")
         ->temporaryDirectory("/path/to/temporary/directory") // Default /tmp
         ->encoder($encoder) // Custom encoder 
         ->decoder($decoder) // Custom decoder
-        ->target(YourClientInterface::class, $baseUrl) // $baseUrl may be declare by annotation @Client(baseUrl="http://example.com")
         ->getClient();
 ```
