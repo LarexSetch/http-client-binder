@@ -10,7 +10,7 @@ readonly class DataListResponse
 {
     public function __construct(
         #[Serializer\SerializedName("elements")]
-        #[Serializer\Type("array<HttpClientBinder\Tests\Base\Client\Dto\DataElement>")]
+        #[Serializer\Type("array<" . DataElement::class . ">")]
         private array $elements,
         #[Serializer\SerializedName("elementsCount")]
         #[Serializer\Type("integer")]
